@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.org.webcompere.modelassert.json.assertjson.AssertJson;
 import uk.org.webcompere.modelassert.json.dsl.HamcrestJsonAssertionBuilder;
 
+import java.io.File;
+import java.nio.file.Path;
+
 /**
  * Jumping on point - create either an assertJson or a hamcrest
  */
@@ -30,6 +33,24 @@ public class JsonAssertions {
     }
 
     /**
+     * Begin an <code>assertJson</code> style assertion
+     * @param file the file containing the json to assert
+     * @return an {@link AssertJson} object for adding assertions to
+     */
+    public static AssertJson<File> assertJson(File file) {
+        return new AssertJson<>(OBJECT_MAPPER::readTree, file);
+    }
+
+    /**
+     * Begin an <code>assertJson</code> style assertion
+     * @param path the path to the file containing the json to assert
+     * @return an {@link AssertJson} object for adding assertions to
+     */
+    public static AssertJson<File> assertJson(Path path) {
+        return assertJson(path.toFile());
+    }
+
+    /**
      * Begin a hamcrest matcher based on a json String
      * @return the matcher
      */
@@ -42,5 +63,19 @@ public class JsonAssertions {
      */
     public static HamcrestJsonAssertionBuilder<JsonNode> jsonNode() {
         return new HamcrestJsonAssertionBuilder<>(node -> node);
+    }
+
+    /**
+     * Begin a hamcrest matcher based on a json file
+     */
+    public static HamcrestJsonAssertionBuilder<File> jsonFile() {
+        return new HamcrestJsonAssertionBuilder<>(OBJECT_MAPPER::readTree);
+    }
+
+    /**
+     * Begin a hamcrest matcher based on a json file via {@link Path}
+     */
+    public static HamcrestJsonAssertionBuilder<Path> jsonFilePath() {
+        return new HamcrestJsonAssertionBuilder<>(path -> OBJECT_MAPPER.readTree(path.toFile()));
     }
 }
