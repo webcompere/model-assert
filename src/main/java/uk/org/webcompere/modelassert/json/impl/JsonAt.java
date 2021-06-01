@@ -1,8 +1,10 @@
-package uk.org.webcompere.modelassert.json;
+package uk.org.webcompere.modelassert.json.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.Result;
 
-public class JsonAt implements Comparison {
+public class JsonAt implements Condition {
     private String path;
     private Object expected;
 
