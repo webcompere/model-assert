@@ -1,7 +1,8 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
-import uk.org.webcompere.modelassert.json.impl.JsonAssertion;
-import uk.org.webcompere.modelassert.json.impl.JsonAt;
+import uk.org.webcompere.modelassert.json.impl.*;
+
+import java.util.regex.Pattern;
 
 public class JsonAssertDslBuilders {
 
@@ -10,8 +11,8 @@ public class JsonAssertDslBuilders {
      * @param <T> type of the input value to the assertion
      * @param <A> the type of assertion
      */
-    public static class At<T, A extends JsonAssertion<T, A>> {
-        private JsonAssertion<T, A> assertion;
+    public static class At<T, A extends CoreJsonAssertion<T, A>> {
+        private CoreJsonAssertion<T, A> assertion;
         private String path;
 
         /**
@@ -20,7 +21,7 @@ public class JsonAssertDslBuilders {
          * @param path the JSON pointer to the path being asserted
          * @see {@link com.fasterxml.jackson.databind.JsonNode#at}
          */
-        public At(JsonAssertion<T, A> assertion, String path) {
+        public At(CoreJsonAssertion<T, A> assertion, String path) {
             this.assertion = assertion;
             this.path = path;
         }
@@ -28,10 +29,44 @@ public class JsonAssertDslBuilders {
         /**
          * Assert that the path is equal to the given object
          * @param expected the expected
-         * @return the {@link JsonAssertion} for fluent assertions, with this condition added
+         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
          */
-        public JsonAssertion<T, A> isEqualTo(Object expected) {
-            return assertion.satisfies(new JsonAt(path, expected));
+        public CoreJsonAssertion<T, A> isEqualTo(Object expected) {
+            return assertion.satisfies(new JsonAt(path, new IsEqualToObject(expected)));
+        }
+
+        /**
+         * Assert that the path is null
+         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+         */
+        public CoreJsonAssertion<T, A> isNull() {
+            return assertion.satisfies(new JsonAt(path, NullCondition.getInstance()));
+        }
+
+        /**
+         * Assert that the path is missing
+         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+         */
+        public CoreJsonAssertion<T, A> isMissing() {
+            return assertion.satisfies(new JsonAt(path, MissingCondition.getInstance()));
+        }
+
+        /**
+         * Assert that the path matches a regular expression
+         * @param regex the expression
+         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+         */
+        public CoreJsonAssertion<T, A> matches(Pattern regex) {
+            return assertion.satisfies(new JsonAt(path, new MatchesCondition(regex)));
+        }
+
+        /**
+         * Assert that the path matches a regular expression
+         * @param regex the expression
+         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+         */
+        public CoreJsonAssertion<T, A> matches(String regex) {
+            return assertion.satisfies(new JsonAt(path, new MatchesCondition(Pattern.compile(regex))));
         }
     }
 }

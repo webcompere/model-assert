@@ -15,6 +15,11 @@ public class Result {
         return expected;
     }
 
+    public Result withExpected(String expected) {
+        this.expected = expected;
+        return this;
+    }
+
     public String getWas() {
         return was;
     }
