@@ -3,11 +3,11 @@ package uk.org.webcompere.modelassert.json.assertjson;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opentest4j.AssertionFailedError;
 import uk.org.webcompere.modelassert.json.Condition;
-import uk.org.webcompere.modelassert.json.impl.JsonAssertion;
+import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 
-public class AssertJson<T> extends JsonAssertion<T, AssertJson<T>> {
+public class AssertJson<T> extends CoreJsonAssertion<T, AssertJson<T>> {
     private JsonNode converted;
 
     public AssertJson(JsonProvider<T> jsonProvider, T source) {

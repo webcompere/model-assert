@@ -6,41 +6,21 @@ import uk.org.webcompere.modelassert.json.Result;
 
 public class JsonAt implements Condition {
     private String path;
-    private Object expected;
+    private Condition condition;
 
-    public JsonAt(String path, Object expected) {
+    public JsonAt(String path, Condition condition) {
         this.path = path;
-        this.expected = expected;
+        this.condition = condition;
     }
 
     @Override
     public Result test(JsonNode json) {
-        String expectedPath = path;
         JsonNode node = json.at(path);
-        String was = node.toString();
-        if (expected == null && node.isNull()) {
-            return new Result(expectedPath, was, true);
-        }
-
-        if (expected == null) {
-            return new Result(expectedPath, was, false);
-        }
-
-        if (expected instanceof Number) {
-            if (node.isNumber()) {
-                return new Result(expectedPath, was, node.numberValue().equals(expected));
-            }
-            return new Result(expectedPath, was, false);
-        }
-
-        if (expected instanceof String && node.isTextual()) {
-            return new Result(expectedPath, was, node.textValue().equals(expected));
-        }
-        return new Result(expectedPath, was, false);
+        return condition.test(node).withExpected(path);
     }
 
     @Override
     public String describe() {
-        return "Path at " + path + " is equal to " + expected;
+        return "Path at " + path + " " + condition.describe();
     }
 }

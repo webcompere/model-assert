@@ -13,21 +13,23 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
-public class JsonAssertion<T, SELF extends JsonAssertion<T, SELF>> extends BaseMatcher<T>
+/**
+ * Common implementation of both variants of the json assertion. Is itself a {@link BaseMatcher} as
+ * the implementation has to work hardest to be compatible with hamcrest
+ * @param <T> the type of JSON source - e.g. String or File
+ * @param <SELF> the type of the subclass, into which the fluent methods cast <code>this</code>
+ */
+public abstract class CoreJsonAssertion<T, SELF extends CoreJsonAssertion<T, SELF>> extends BaseMatcher<T>
         implements JsonAssertDsl<T, SELF> {
 
     private JsonProvider<T> jsonProvider;
     private List<Condition> conditions = new LinkedList<>();
 
-    public JsonAssertion(JsonProvider<T> jsonProvider) {
+    protected CoreJsonAssertion(JsonProvider<T> jsonProvider) {
         this.jsonProvider = jsonProvider;
     }
 
-    /**
-     * Add a condition that the input JSON must satisfy
-     * @param condition the condition
-     * @return <code>this</code> for fluent calling
-     */
+    @Override
     public SELF satisfies(Condition condition) {
         conditions.add(condition);
         return assertion();
