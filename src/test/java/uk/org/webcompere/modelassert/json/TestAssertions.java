@@ -13,6 +13,7 @@ import static uk.org.webcompere.modelassert.json.JsonAssertions.json;
 
 public class TestAssertions {
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void assertAllWays(String actualThatPasses,
                                       String actualThatFails,
                                       Consumer<CoreJsonAssertion<?, ?>> addRules) {

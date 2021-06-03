@@ -1,4 +1,4 @@
-package uk.org.webcompere.modelassert.json.impl;
+package uk.org.webcompere.modelassert.json.condition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.Condition;
@@ -15,27 +15,26 @@ public class IsEqualToObject implements Condition {
 
     @Override
     public Result test(JsonNode node) {
-        String expectedValue = Objects.toString(expected);
         String was = node.toString();
         if (expected == null && node.isNull()) {
-            return new Result(expectedValue, was, true);
+            return new Result(describe(), was, true);
         }
 
         if (expected == null) {
-            return new Result(expectedValue, was, false);
+            return new Result(describe(), was, false);
         }
 
         if (expected instanceof Number) {
             if (node.isNumber()) {
-                return new Result(expectedValue, was, node.numberValue().equals(expected));
+                return new Result(describe(), was, node.numberValue().equals(expected));
             }
-            return new Result(expectedValue, was, false);
+            return new Result(describe(), was, false);
         }
 
         if (expected instanceof String && node.isTextual()) {
-            return new Result(expectedValue, was, node.textValue().equals(expected));
+            return new Result(describe(), was, node.textValue().equals(expected));
         }
-        return new Result(expectedValue, was, false);
+        return new Result(describe(), was, false);
     }
 
     @Override

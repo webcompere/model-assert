@@ -1,27 +1,27 @@
-package uk.org.webcompere.modelassert.json.impl;
+package uk.org.webcompere.modelassert.json.condition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 
-public class MissingCondition implements Condition {
-    private static final MissingCondition INSTANCE = new MissingCondition();
+public class NullCondition implements Condition {
+    private static final NullCondition INSTANCE = new NullCondition();
 
-    private MissingCondition() {
+    private NullCondition() {
 
     }
 
     /**
      * Access the one and only instance
-     * @return the MissingCondition instnace
+     * @return the NullCondition instnace
      */
-    public static MissingCondition getInstance() {
+    public static NullCondition getInstance() {
         return INSTANCE;
     }
 
     @Override
     public Result test(JsonNode json) {
-        return new Result("missing", json.getNodeType().toString(), json.isMissingNode());
+        return new Result("null", json.getNodeType().toString(), json.isNull());
     }
 
     /**
@@ -31,6 +31,6 @@ public class MissingCondition implements Condition {
      */
     @Override
     public String describe() {
-        return "Node should be missing";
+        return "JSON must be null";
     }
 }

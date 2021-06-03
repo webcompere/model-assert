@@ -1,4 +1,4 @@
-package uk.org.webcompere.modelassert.json.impl;
+package uk.org.webcompere.modelassert.json.condition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.Condition;

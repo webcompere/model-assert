@@ -62,7 +62,7 @@ public abstract class CoreJsonAssertion<T, SELF extends CoreJsonAssertion<T, SEL
         description.appendText(conditions.stream()
                 .map(condition -> condition.test(jsonNode))
                 .filter(res -> !res.isPassed())
-                .map(res -> res.getExpected() + " was " + res.getWas())
+                .map(res -> res.getCondition() + " was " + res.getWas())
                 .collect(joining("\n")));
     }
 }

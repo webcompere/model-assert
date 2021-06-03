@@ -1,5 +1,8 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.hamcrest.Matcher;
+import uk.org.webcompere.modelassert.json.condition.*;
 import uk.org.webcompere.modelassert.json.impl.*;
 
 import java.util.regex.Pattern;
@@ -67,6 +70,16 @@ public class JsonAssertDslBuilders {
          */
         public CoreJsonAssertion<T, A> matches(String regex) {
             return assertion.satisfies(new JsonAt(path, new MatchesCondition(Pattern.compile(regex))));
+        }
+
+        /**
+         * Assert that the path matches a Hamcrest Matcher for
+         * {@link JsonNode}
+         * @param matcher the matcher
+         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+         */
+        public CoreJsonAssertion<T, A> matches(Matcher<JsonNode> matcher) {
+            return assertion.satisfies(new JsonAt(path, new MatcherCondition(matcher)));
         }
     }
 }
