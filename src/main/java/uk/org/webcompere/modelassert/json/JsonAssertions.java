@@ -60,6 +60,7 @@ public class JsonAssertions {
 
     /**
      * Begin a hamcrest matcher based on a json node
+     * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<JsonNode> jsonNode() {
         return new HamcrestJsonAssertionBuilder<>(node -> node);
@@ -67,6 +68,7 @@ public class JsonAssertions {
 
     /**
      * Begin a hamcrest matcher based on a json file
+     * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<File> jsonFile() {
         return new HamcrestJsonAssertionBuilder<>(OBJECT_MAPPER::readTree);
@@ -74,6 +76,7 @@ public class JsonAssertions {
 
     /**
      * Begin a hamcrest matcher based on a json file via {@link Path}
+     * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<Path> jsonFilePath() {
         return new HamcrestJsonAssertionBuilder<>(path -> OBJECT_MAPPER.readTree(path.toFile()));

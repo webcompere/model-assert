@@ -15,7 +15,7 @@ public interface JsonProvider<T> {
      * Convert the input object into JSON
      * @param json the json source
      * @return a loaded {@link JsonNode} from the source
-     * @throws IOException
+     * @throws IOException on load error
      */
     JsonNode from(T json) throws IOException;
 
@@ -28,7 +28,7 @@ public interface JsonProvider<T> {
     @SuppressWarnings("unchecked") // hamcrest doesn't provide type safety but this object is constrained by generics
     default JsonNode jsonFrom(Object item) {
         if (item == null) {
-            throw new AssertionFailedError("Input JSON is null");
+            return null;
         }
         try {
             return from((T)item);

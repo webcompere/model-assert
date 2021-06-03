@@ -19,37 +19,37 @@ class JsonAssertionsTest {
 
     @Test
     void jsonAtInHamcrest() {
-        assertThat("{\"name\":\"Bill\"}", json().at("/name").isEqualTo("Bill"));
+        assertThat("{\"name\":\"Bill\"}", json().at("/name").hasValue("Bill"));
     }
 
     @Test
     void multiJsonAtInHamcrest() {
         assertThat("{\"name\":\"Bill\", \"age\":42}",
-                json().at("/name").isEqualTo("Bill")
-                        .at("/age").isEqualTo(42));
+                json().at("/name").hasValue("Bill")
+                        .at("/age").hasValue(42));
     }
 
     @Test
     void jsonAtInHamcrestNegative() {
-        assertThatThrownBy(() -> assertThat("{\"name\":\"Bill\"}", json().at("/name").isEqualTo("Not Bill")))
+        assertThatThrownBy(() -> assertThat("{\"name\":\"Bill\"}", json().at("/name").hasValue("Not Bill")))
                 .isInstanceOf(Error.class)
-                .hasMessage("\nExpected: Path at /name is equal to Not Bill\n" +
+                .hasMessage("\nExpected: Json is not null\nPath at /name is equal to Not Bill\n" +
                         "     but: /name is equal to Not Bill was \"Bill\"");
     }
 
     @Test
     void jsonAtMultiInHamcrestNegative() {
         assertThatThrownBy(() -> assertThat("{\"name\":\"Bill\", \"age\":42}",
-                json().at("/name").isEqualTo("Bill")
-                        .at("/age").isEqualTo(12)))
+                json().at("/name").hasValue("Bill")
+                        .at("/age").hasValue(12)))
                 .isInstanceOf(Error.class)
-                .hasMessage("\nExpected: Path at /name is equal to Bill\nPath at /age is equal to 12\n" +
+                .hasMessage("\nExpected: Json is not null\nPath at /name is equal to Bill\nPath at /age is equal to 12\n" +
                         "     but: /age is equal to 12 was 42");
     }
 
     @Test
     void jsonAtInHamcrestBadJson() {
-        assertThatThrownBy(() -> assertThat("{\"name\"", json().at("/name").isEqualTo("Not Bill")))
+        assertThatThrownBy(() -> assertThat("{\"name\"", json().at("/name").hasValue("Not Bill")))
                 .isInstanceOf(Error.class);
     }
 
@@ -57,12 +57,12 @@ class JsonAssertionsTest {
     void jsonAtWithAssertJson() {
         assertJson("{\"name\":\"Bill\"}")
                 .at("/name")
-                .isEqualTo("Bill");
+                .hasValue("Bill");
     }
 
     @Test
     void jsonAtWithAssertJsonNegative() {
-        assertThatThrownBy(() -> assertJson("{\"name\":\"Bill\"}").at("/name").isEqualTo("Not Bill"))
+        assertThatThrownBy(() -> assertJson("{\"name\":\"Bill\"}").at("/name").hasValue("Not Bill"))
                 .isInstanceOf(Error.class)
                 .hasMessage("Expected: Path at /name is equal to Not Bill\n     but: /name is equal to Not Bill was \"Bill\"");
     }
@@ -70,15 +70,15 @@ class JsonAssertionsTest {
     @Test
     void multiJsonWithAssertJson() {
         assertJson("{\"name\":\"Bill\", \"age\":42}")
-                .at("/name").isEqualTo("Bill")
-                .at("/age").isEqualTo(42);
+                .at("/name").hasValue("Bill")
+                .at("/age").hasValue(42);
     }
 
     @Test
     void jsonAtMultiWithAssertJsonNegative() {
         assertThatThrownBy(() -> assertJson("{\"name\":\"Bill\", \"age\":42}")
-                .at("/name").isEqualTo("Bill")
-                        .at("/age").isEqualTo(12))
+                .at("/name").hasValue("Bill")
+                        .at("/age").hasValue(12))
                 .isInstanceOf(Error.class)
                 .hasMessage("Expected: Path at /age is equal to 12\n     but: /age is equal to 12 was 42");
     }
@@ -88,7 +88,7 @@ class JsonAssertionsTest {
         JsonNode node = OBJECT_MAPPER.readTree("{\"name\":\"John\"}");
         assertJson(node)
                 .at("/name")
-                .isEqualTo("John");
+                .hasValue("John");
     }
 
     @Test
@@ -96,27 +96,27 @@ class JsonAssertionsTest {
         JsonNode node = OBJECT_MAPPER.readTree("{\"name\":\"John\"}");
         assertThat(node, jsonNode()
                 .at("/name")
-                .isEqualTo("John"));
+                .hasValue("John"));
     }
 
     @Test
     void canAssertWithPath() {
         assertJson(SIMPLE_JSON)
                 .at("/child/name")
-                .isEqualTo("Ms Child");
+                .hasValue("Ms Child");
     }
 
     @Test
     void canUseHamcrestAssertWithPath() {
         assertThat(SIMPLE_JSON, jsonFilePath()
             .at("/child/name")
-            .isEqualTo("Ms Child"));
+            .hasValue("Ms Child"));
     }
 
     @Test
     void canUseHamcrestAssertWithFile() {
         assertThat(SIMPLE_JSON.toFile(), jsonFile()
                 .at("/child/name")
-                .isEqualTo("Ms Child"));
+                .hasValue("Ms Child"));
     }
 }

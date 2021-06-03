@@ -4,12 +4,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 
-import java.util.Objects;
-
-public class IsEqualToObject implements Condition {
+/**
+ * Performs the hasValue operation with flexibility and type coercion.
+ */
+public class HasValueWithCoercion implements Condition {
     private Object expected;
 
-    public IsEqualToObject(Object expected) {
+    /**
+     * Construct with the expected value
+     * @param expected the value expected
+     */
+    public HasValueWithCoercion(Object expected) {
         this.expected = expected;
     }
 

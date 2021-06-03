@@ -1,11 +1,8 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.hamcrest.Matcher;
-import uk.org.webcompere.modelassert.json.condition.*;
-import uk.org.webcompere.modelassert.json.impl.*;
-
-import java.util.regex.Pattern;
+import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
+import uk.org.webcompere.modelassert.json.impl.JsonAt;
 
 public class JsonAssertDslBuilders {
 
@@ -14,7 +11,7 @@ public class JsonAssertDslBuilders {
      * @param <T> type of the input value to the assertion
      * @param <A> the type of assertion
      */
-    public static class At<T, A extends CoreJsonAssertion<T, A>> {
+    public static class At<T, A extends CoreJsonAssertion<T, A>> implements JsonNodeAssertDsl<T, A> {
         private CoreJsonAssertion<T, A> assertion;
         private String path;
 
@@ -22,64 +19,16 @@ public class JsonAssertDslBuilders {
          * Construct an at builder on a given assertion
          * @param assertion the assertion that will receive the at condition
          * @param path the JSON pointer to the path being asserted
-         * @see {@link com.fasterxml.jackson.databind.JsonNode#at}
+         * @see com.fasterxml.jackson.databind.JsonNode#at
          */
         public At(CoreJsonAssertion<T, A> assertion, String path) {
             this.assertion = assertion;
             this.path = path;
         }
 
-        /**
-         * Assert that the path is equal to the given object
-         * @param expected the expected
-         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
-         */
-        public CoreJsonAssertion<T, A> isEqualTo(Object expected) {
-            return assertion.satisfies(new JsonAt(path, new IsEqualToObject(expected)));
-        }
-
-        /**
-         * Assert that the path is null
-         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
-         */
-        public CoreJsonAssertion<T, A> isNull() {
-            return assertion.satisfies(new JsonAt(path, NullCondition.getInstance()));
-        }
-
-        /**
-         * Assert that the path is missing
-         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
-         */
-        public CoreJsonAssertion<T, A> isMissing() {
-            return assertion.satisfies(new JsonAt(path, MissingCondition.getInstance()));
-        }
-
-        /**
-         * Assert that the path matches a regular expression
-         * @param regex the expression
-         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
-         */
-        public CoreJsonAssertion<T, A> matches(Pattern regex) {
-            return assertion.satisfies(new JsonAt(path, new MatchesCondition(regex)));
-        }
-
-        /**
-         * Assert that the path matches a regular expression
-         * @param regex the expression
-         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
-         */
-        public CoreJsonAssertion<T, A> matches(String regex) {
-            return assertion.satisfies(new JsonAt(path, new MatchesCondition(Pattern.compile(regex))));
-        }
-
-        /**
-         * Assert that the path matches a Hamcrest Matcher for
-         * {@link JsonNode}
-         * @param matcher the matcher
-         * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
-         */
-        public CoreJsonAssertion<T, A> matches(Matcher<JsonNode> matcher) {
-            return assertion.satisfies(new JsonAt(path, new MatcherCondition(matcher)));
+        @Override
+        public A satisfies(Condition condition) {
+            return assertion.satisfies(new JsonAt(path, condition));
         }
     }
 }
