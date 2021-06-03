@@ -2,7 +2,7 @@ package uk.org.webcompere.modelassert.json.dsl;
 
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
-import uk.org.webcompere.modelassert.json.impl.NullCondition;
+import uk.org.webcompere.modelassert.json.condition.NullCondition;
 
 /**
  * The DSL as applies to the JsonAssertion itself, regardless of whether we've built one, or are

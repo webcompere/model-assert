@@ -33,7 +33,8 @@ class JsonAssertionsTest {
     void jsonAtInHamcrestNegative() {
         assertThatThrownBy(() -> assertThat("{\"name\":\"Bill\"}", json().at("/name").isEqualTo("Not Bill")))
                 .isInstanceOf(Error.class)
-                .hasMessage("\nExpected: Path at /name is equal to Not Bill\n     but: /name was \"Bill\"");
+                .hasMessage("\nExpected: Path at /name is equal to Not Bill\n" +
+                        "     but: /name is equal to Not Bill was \"Bill\"");
     }
 
     @Test
@@ -42,7 +43,8 @@ class JsonAssertionsTest {
                 json().at("/name").isEqualTo("Bill")
                         .at("/age").isEqualTo(12)))
                 .isInstanceOf(Error.class)
-                .hasMessage("\nExpected: Path at /name is equal to Bill\nPath at /age is equal to 12\n     but: /age was 42");
+                .hasMessage("\nExpected: Path at /name is equal to Bill\nPath at /age is equal to 12\n" +
+                        "     but: /age is equal to 12 was 42");
     }
 
     @Test
@@ -62,7 +64,7 @@ class JsonAssertionsTest {
     void jsonAtWithAssertJsonNegative() {
         assertThatThrownBy(() -> assertJson("{\"name\":\"Bill\"}").at("/name").isEqualTo("Not Bill"))
                 .isInstanceOf(Error.class)
-                .hasMessage("Expected: Path at /name is equal to Not Bill\n     but: /name was \"Bill\"");
+                .hasMessage("Expected: Path at /name is equal to Not Bill\n     but: /name is equal to Not Bill was \"Bill\"");
     }
 
     @Test
@@ -78,7 +80,7 @@ class JsonAssertionsTest {
                 .at("/name").isEqualTo("Bill")
                         .at("/age").isEqualTo(12))
                 .isInstanceOf(Error.class)
-                .hasMessage("Expected: Path at /age is equal to 12\n     but: /age was 42");
+                .hasMessage("Expected: Path at /age is equal to 12\n     but: /age is equal to 12 was 42");
     }
 
     @Test

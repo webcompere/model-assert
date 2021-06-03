@@ -22,8 +22,8 @@ public class AssertJson<T> extends CoreJsonAssertion<T, AssertJson<T>> {
         Result result = condition.test(converted);
         if (!result.isPassed()) {
             throw new AssertionFailedError("Expected: " + condition.describe() +
-                    "\n     but: " + result.getExpected() + " was " + result.getWas(),
-                    result.getExpected(), result.getWas());
+                    "\n     but: " + result.getCondition() + " was " + result.getWas(),
+                    result.getCondition(), result.getWas());
         }
 
         return super.satisfies(condition);

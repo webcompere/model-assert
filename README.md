@@ -13,17 +13,16 @@ t.b.c.
 ## Quickstart
 
 ```java
-String json = ".... some json ...";
+String json = "{.... some json ...}";
 
 // assertJ style
 assertJson(json)
-   .at("/name")
-   .isEqualTo("ModelAssert");
+   .at("/name").isEqualTo("ModelAssert");
 
 // hamcrest style
-MatcherAssert.assertThat(json, 
-        json().at("/name")
-           .isEqualTo());
+MatcherAssert.assertThat(json,
+    json()
+        .at("/name").isEqualTo());
 ```
 
 `at` is one possible condition, in this case using Jackson's JSON Pointer syntax.
@@ -34,6 +33,17 @@ execute each clause in order, stopping on error.
 The `json*` methods - `json`, `jsonFile`, `jsonFilePath` start the
 construction of a hamcrest matcher which conditions are added to.
 These are executed when the hamcrest matcher is executed.
+
+> Note: the DSL is intended to provide auto-complete and is largely fluent.
+> It is also composable, so multiple comparisons can be added after the 
+> last one is complete:
+
+```java
+assertJson(json)
+   .at("/name").isEqualTo("ModelAssert")
+   .at("/license").isEqualTo("MIT")
+   .at("/price").isNull();
+```
 
 ### Interoperability with Spring MVC Matchers
 
@@ -61,9 +71,10 @@ power of the assertion library.
 The entry point to creating an assertion is:
 
 - `assertJson` - overloaded to take JSON as `String`, `File` or `Path` - **produces a fluent assertion like AssertJ**
-- `json` - start creating a hamcrest matcher from a `String`
-- `jsonFile` - start creating a hamcrest matcher from a `File`
-- `jsonFilePath` - start creating a hamcrest matcher from a `Path`
+- `json` - start creating a hamcrest matcher for a `String`
+- `jsonNode` - start creating a hamcrest matcher for a `JsonNode`
+- `jsonFile` - start creating a hamcrest matcher for a `File`
+- `jsonFilePath` - start creating a hamcrest matcher for a `Path`
 
 After that, there are high level methods to add conditions to the matcher:
 
@@ -87,6 +98,37 @@ Build a `JsonAt` condition by using `.at("/some/json/pointer")`.
 This allows assertions within the tree:
 
 - `isEqualTo` - assert that a field has a specific value
+  ```java
+  assertJson(jsonString)
+    .at("/name").isEqualTo("ModelAssert");
+  ```
 - `isNull` - assert that this path resolves to `null`
+  ```java
+  assertJson(jsonString)
+    .at("/price").isNull();
+  ```
 - `isMissing` - assert that this path resolves to _missing_ - i.e. it's an unknown path in the JSON
-- `matches` - assert that the **text** of this node matches a regular expression - some common patterns are available in the `Patterns` class
+  ```java
+  assertJson(jsonString)
+    .at("/random").isMissing();
+  ```
+- `matches(Pattern|String)` - assert that the **text** of this node matches a regular expression - some common patterns are available in the `Patterns` class
+  ```java
+  assertJson(jsonString)
+    .at("/guid").matches(GUID_PATTERN);
+  ```
+- `matches(Matcher<JsonNode>)` - assert that the **node** found at this JSON path matches a hamcrest matcher for `JsonNode`
+  ```java
+  assertJson(jsonString)
+    .at("/child/someobject").matches(customHamcrestMatcher);
+  ```
+  This latter example, allows us to reuse the hamcrest form of the 
+  json assertion across tests, if there's a common pattern, or allows
+  us to apply a particular set of assertions to only a subtree of the original:
+  ```java
+  assertJson(jsonString)
+    .at("/root/child/otherchild/interestingplace")
+    .matches(jsonNode()  // jsonNode() creates a new matcher
+       .at("/name").isEqualTo("Model")
+       .at("/age").isEqualTo(42));
+  ```

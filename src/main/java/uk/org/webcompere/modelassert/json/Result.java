@@ -1,22 +1,25 @@
 package uk.org.webcompere.modelassert.json;
 
+/**
+ *
+ */
 public class Result {
-    private String expected;
+    private String condition;
     private String was;
     private boolean isPassed;
 
-    public Result(String expected, String was, boolean isPassed) {
-        this.expected = expected;
+    public Result(String condition, String was, boolean isPassed) {
+        this.condition = condition;
         this.was = was;
         this.isPassed = isPassed;
     }
 
-    public String getExpected() {
-        return expected;
+    public String getCondition() {
+        return condition;
     }
 
-    public Result withExpected(String expected) {
-        this.expected = expected;
+    public Result withPreCondition(String condition) {
+        this.condition = condition + " " + this.condition;
         return this;
     }
 
