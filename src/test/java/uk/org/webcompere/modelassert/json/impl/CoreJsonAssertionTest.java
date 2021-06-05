@@ -2,7 +2,7 @@ package uk.org.webcompere.modelassert.json.impl;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import uk.org.webcompere.modelassert.json.dsl.JsonAssertDsl;
+import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 
 import static uk.org.webcompere.modelassert.json.JsonAssertions.jsonNode;
 import static uk.org.webcompere.modelassert.json.Patterns.GUID_PATTERN;
@@ -14,7 +14,7 @@ class CoreJsonAssertionTest {
     @Test
     void jsonAt() {
         assertAllWays("{\"name\":\"Jason\"}", "{\"name\":\"Damian\"}",
-                assertion -> assertion.at("/name").isEqualTo("Jason"));
+                assertion -> assertion.at("/name").hasValue("Jason"));
     }
 
     @Test
@@ -46,7 +46,7 @@ class CoreJsonAssertionTest {
     @Test
     void jsonIsNull() {
         assertAllWays("null", "{\"name\":\"Damian\"}",
-                JsonAssertDsl::isNull);
+                JsonNodeAssertDsl::isNull);
     }
 
     @Test
@@ -57,5 +57,49 @@ class CoreJsonAssertionTest {
                         .matches(jsonNode()
                                 .at("/guid")
                                 .matches(GUID_PATTERN.pattern())));
+    }
+
+    @Test
+    void numericIsGreaterThan() {
+        assertAllWays("{\"count\":10}", "{\"count\":9}",
+                assertion -> assertion.at("/count").isGreaterThan(9));
+    }
+
+    @Test
+    void intIsGreaterThan() {
+        assertAllWays("{\"count\":10}", "{\"count\":9}",
+                assertion -> assertion.at("/count").isGreaterThanInt(9));
+    }
+
+    @Test
+    void longIsGreaterThan() {
+        assertAllWays("{\"count\":10}", "{\"count\":9}",
+                assertion -> assertion.at("/count").isGreaterThanLong(9));
+    }
+
+    @Test
+    void longIsGreaterThanOrEqualTo() {
+        assertAllWays("{\"count\":9}", "{\"count\":8}",
+                assertion -> assertion.at("/count").isGreaterThanOrEqualToLong(9));
+    }
+
+    @Test
+    void numericIsGreaterThanViaNumbersDsl() {
+        assertAllWays("{\"count\":10}", "{\"count\":9}",
+                assertion -> assertion.at("/count").number().isGreaterThan(9));
+    }
+
+    @Test
+    void jsonAtStringInStringContext() {
+        assertAllWays("{\"name\":\"Jason\"}", "{\"name\":\"Damian\"}",
+                assertion -> assertion.at("/name")
+                        .text().isText("Jason"));
+    }
+
+    @Test
+    void jsonAtStringInStringContextDetectString() {
+        assertAllWays("{\"name\":\"Jason\"}", "{\"name\":null}",
+                assertion -> assertion.at("/name")
+                        .text().isText());
     }
 }

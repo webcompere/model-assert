@@ -21,7 +21,7 @@ public class MissingCondition implements Condition {
 
     @Override
     public Result test(JsonNode json) {
-        return new Result("missing", json.getNodeType().toString(), json.isMissingNode());
+        return new Result(describe(), json.getNodeType().toString(), json.isMissingNode());
     }
 
     /**
@@ -31,6 +31,6 @@ public class MissingCondition implements Condition {
      */
     @Override
     public String describe() {
-        return "Node should be missing";
+        return "missing";
     }
 }
