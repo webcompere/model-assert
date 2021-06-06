@@ -10,7 +10,7 @@ import uk.org.webcompere.modelassert.json.hamcrest.HamcrestJsonAssertion;
  * a hamcrest matcher, but will produce one as soon as a meaningful assertion is added
  * @param <T> the type of JSON that this asserts
  */
-public class HamcrestJsonAssertionBuilder<T> implements JsonNodeAssertDsl<T, HamcrestJsonAssertion<T>> {
+public class HamcrestJsonAssertionBuilder<T> implements JsonNodeAssertDsl<HamcrestJsonAssertion<T>> {
     private HamcrestJsonAssertion<T> assertion;
 
     public HamcrestJsonAssertionBuilder(JsonProvider<T> provider) {

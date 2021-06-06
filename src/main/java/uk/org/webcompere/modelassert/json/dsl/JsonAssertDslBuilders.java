@@ -2,7 +2,6 @@ package uk.org.webcompere.modelassert.json.dsl;
 
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.condition.JsonAt;
-import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
 public class JsonAssertDslBuilders {
 
@@ -10,7 +9,7 @@ public class JsonAssertDslBuilders {
      * Builder of an <code>at</code> condition, for JSON Pointer comparison
      * @param <A> the type of assertion
      */
-    public static class At<T, A extends CoreJsonAssertion<T, A>> implements JsonNodeAssertDsl<T, A> {
+    public static class At<A> implements JsonNodeAssertDsl<A> {
         private Satisfies<A> satisfies;
         private String path;
 

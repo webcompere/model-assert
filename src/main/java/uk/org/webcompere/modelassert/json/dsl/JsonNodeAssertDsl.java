@@ -13,10 +13,9 @@ import static uk.org.webcompere.modelassert.json.condition.Not.not;
 
 /**
  * DSLs available on any JsonNode of unknown type. Aggregates all DSLs.
- * @param <T> the type of the JSON source that will be converted by the provider
  * @param <A> the type of the ultimate assertion
  */
-public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
+public interface JsonNodeAssertDsl<A>
         extends Satisfies<A>, TextNodeDsl<A>, NumberNodeDsl<A>,
         BooleanNodeDsl<A>, ObjectNodeDsl<A>, ArrayNodeDsl<A> {
 
@@ -76,7 +75,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * @param customisedBy the fluent assertions
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
      */
-    default A is(Function<JsonNodeAssertDsl<T, A>, A> customisedBy) {
+    default A is(Function<JsonNodeAssertDsl<A>, A> customisedBy) {
         return customisedBy.apply(this);
     }
 
@@ -145,7 +144,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * @param path the json path to use
      * @return the {@link JsonAssertDslBuilders.At} to construct the at expression
      */
-    default JsonAssertDslBuilders.At<T, A> at(String path) {
+    default JsonAssertDslBuilders.At<A> at(String path) {
         return new JsonAssertDslBuilders.At<>(this, path);
     }
 

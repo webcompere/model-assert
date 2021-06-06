@@ -1,6 +1,7 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.condition.ConditionList;
 
 public interface Satisfies<A> {
     /**
@@ -9,4 +10,13 @@ public interface Satisfies<A> {
      * @return <code>this</code> for fluent calling
      */
     A satisfies(Condition condition);
+
+    /**
+     * Add multiple conditions in a list
+     * @param conditionList the list of conditions
+     * @return <code>this</code> for fluent calling
+     */
+    default A satisfies(ConditionList conditionList) {
+        return satisfies(conditionList.toCondition());
+    }
 }

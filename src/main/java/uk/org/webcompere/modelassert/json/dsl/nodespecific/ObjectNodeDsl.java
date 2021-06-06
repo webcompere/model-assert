@@ -2,6 +2,7 @@ package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.condition.HasSize;
 import uk.org.webcompere.modelassert.json.condition.ObjectContainsKeys;
 import uk.org.webcompere.modelassert.json.condition.PredicateWrappedCondition;
 import uk.org.webcompere.modelassert.json.dsl.Satisfies;
@@ -95,7 +96,7 @@ public interface ObjectNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
      * @return the assertion for fluent assertions, with this condition added
      */
     default A containsKeysExactlyInAnyOrder(String key, String... keys) {
-        hasSize(1 + keys.length);
-        return containsKeys(key, keys);
+        return satisfiesObjectCondition(new HasSize(1 + keys.length)
+            .and(new ObjectContainsKeys(key, keys)));
     }
 }

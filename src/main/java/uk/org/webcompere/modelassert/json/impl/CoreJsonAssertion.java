@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.joining;
  * @param <A> the type of the assertion subclass, into which the fluent methods cast <code>this</code>
  */
 public abstract class CoreJsonAssertion<T, A extends CoreJsonAssertion<T, A>> extends BaseMatcher<T>
-        implements JsonNodeAssertDsl<T, A>, Satisfies<A> {
+        implements JsonNodeAssertDsl<A>, Satisfies<A> {
 
     private JsonProvider<T> jsonProvider;
     private List<Condition> conditions = new LinkedList<>();
