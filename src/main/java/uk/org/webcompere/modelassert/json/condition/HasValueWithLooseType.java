@@ -5,16 +5,17 @@ import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 
 /**
- * Performs the hasValue operation with flexibility and type coercion.
+ * Performs the hasValue operation with flexibility and type flexibility. It works
+ * out the likely type of node from the input.
  */
-public class HasValueWithCoercion implements Condition {
+public class HasValueWithLooseType implements Condition {
     private Object expected;
 
     /**
      * Construct with the expected value
      * @param expected the value expected
      */
-    public HasValueWithCoercion(Object expected) {
+    public HasValueWithLooseType(Object expected) {
         this.expected = expected;
     }
 

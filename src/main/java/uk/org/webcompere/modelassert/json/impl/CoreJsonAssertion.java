@@ -8,7 +8,6 @@ import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.condition.JsonIsNotNull;
-import uk.org.webcompere.modelassert.json.dsl.JsonAssertDsl;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 
 import java.util.LinkedList;
@@ -23,7 +22,7 @@ import static java.util.stream.Collectors.joining;
  * @param <A> the type of the assertion subclass, into which the fluent methods cast <code>this</code>
  */
 public abstract class CoreJsonAssertion<T, A extends CoreJsonAssertion<T, A>> extends BaseMatcher<T>
-        implements JsonAssertDsl<T, A>, JsonNodeAssertDsl<T, A> {
+        implements JsonNodeAssertDsl<T, A>, uk.org.webcompere.modelassert.json.dsl.Satisfies<T, A> {
 
     private JsonProvider<T> jsonProvider;
     private List<Condition> conditions = new LinkedList<>();
@@ -40,8 +39,7 @@ public abstract class CoreJsonAssertion<T, A extends CoreJsonAssertion<T, A>> ex
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public A assertion() {
+    A assertion() {
         return (A)this;
     }
 

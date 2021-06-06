@@ -9,7 +9,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 /**
- * Jumping on point - create either an assertJson or a hamcrest
+ * Jumping on point - create either an assertJson or a hamcrest. Facade/factory methods.
  */
 public class JsonAssertions {
     private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();

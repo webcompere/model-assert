@@ -40,6 +40,6 @@ public class Not implements Condition {
      */
     @Override
     public String describe() {
-        return NOT_PREFIX + delegate.describe();
+        return NOT_PREFIX + " " + delegate.describe();
     }
 }
