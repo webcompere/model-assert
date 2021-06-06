@@ -14,6 +14,8 @@ a route to the element is a series of `/` delimited field names or array indices
 
 ## Installation
 
+ModelAssert requires Java 8.
+
 t.b.c.
 
 ## Quickstart
@@ -81,7 +83,7 @@ There are multiple contexts from which assertions are available:
 - Assertion - this allows `at` as well as ALL other assertions
 - Inside `at` - allows any `node` assertion, and then returns to `assertion` context
 - Node - this allows any assertion on the current node, which may be of any valid json type as well as `missing`
-- Type specific - by calling `number`, `text`, `object`, `array`, or `boolean` on a node context DSL, the DSL
+- Type specific - by calling `number`, `text`, `object`, `array`, or `booleanNode` on a node context DSL, the DSL
 can be narrowed down to assertions for just that type - this can also be more expressive
 
 ```java
@@ -163,7 +165,9 @@ type specific assertions below, as well as:
        .at("/name").hasValue("Model")
        .at("/age").hasValue(42));
   ```
-- `is`/`isNot` - provide a description and a `Predicate` to customise with a custom match condition
+- `is`/`isNot` - provide a description and a `Predicate<JsonNode>` to customise with a custom match condition
+  > This is the unlimited customisable assertion - allowing any test to be done on a per node basis, if it's
+  > not already part of the DSL
   ```java
   assertJson("42")
     .is("Even number", jsonNode -> jsonNode.isNumber() && jsonNode.asInt() % 2 == 0);
@@ -182,15 +186,44 @@ type specific assertions below, as well as:
   }
   ```
 
-### String Context Conditions
+### Text Context Conditions
 
-- `isText` - assert that the node is a text node, with optional specific text - note: this can also be achieved with `hasValue`, but adds
+- `isText`/`isNotText` - assert that the node is a text node, with optional specific text - note: this can also be achieved with `hasValue`, but adds
 some extra checking that this is a text node
+  ```java
+  assertJson("\"theText\"")
+    .isText();
+
+  assertJson("\"theText\"")
+    .isText("theText");
+
+  assertJson("{\"child\":{\"age\":123}}")
+    .at("/child/age").isNotText();
+  ```
+- `isEmptyText`/`isNotEmptyText` - both of these require the node to be text, and then assert that the text is `""` or not
+  ```java
+  assertJson("\"\"")
+    .isEmptyText();
+
+  // FAILS! - wrong type
+  assertJson("0")
+    .isNotEmptyText();
+
+  // non empty
+  assertJson("\"0\"")
+    .isNotEmptyText();
+  ```
 - `matches(Pattern|String)` - assert that the **text** of this node matches a regular expression - some common patterns are available in the `Patterns` class
   ```java
   assertJson(jsonString)
     .at("/guid").matches(GUID_PATTERN);
   ```
+- `textMatches`- allows a custom predicate to be passed in order to perform a custom check
+  ```java
+  assertJson("\"a-b-c\"")
+    .textMatches("Has dashes", text -> text.contains("-"));
+  ```
+- `textContains`/`textDoesNotContain` - reuses the logic of the regular expression matcher to find substrings
 
 ### Numeric Context Conditions
 - `isGreaterThan`, `isGreaterThanOrEqualTo`, `isLessThan`, `isLessThanOrEqualTo` - these
@@ -201,6 +234,19 @@ some extra checking that this is a text node
   ```
   More specific typed versions - `isGreaterThanInt` or `isLessThanLong` also exist to avoid a test
   passing through accidental type coercion or overflow.
+
+### Boolean Context Conditions
+- `isTrue`/`isFalse` - requires the node to be boolean and have the correct value
+- `isBoolean`/`isNotBoolean` - asserts the type of the node
+
+### Array Context Conditions
+- `isArray`/`isNotArray` - asserts the type of the node
+
+### Object Context Conditions
+- `isObject`/`isNotObject` - asserts the type of the node
+- `containsKey`/`containsKeys`/`doesNotContainKey`/`doesNotContainKeys` - checks for the presence of a given set of keys in the object
+- `containsKeysExactly` - requires the given keys to be present in the exact order provided
+- `containsKeysExactlyInAnyOrder` - requires the given keys all to be present, regardless of order in the JSON
 
 ## Interoperability
 

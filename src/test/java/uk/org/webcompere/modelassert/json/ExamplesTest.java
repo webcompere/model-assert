@@ -2,13 +2,42 @@ package uk.org.webcompere.modelassert.json;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 
 @DisplayName("Some usage examples")
 class ExamplesTest {
+
+    @Test
+    void isText() {
+        assertJson("\"theText\"")
+            .isText();
+
+        assertJson("\"theText\"")
+            .isText("theText");
+
+        assertJson("{\"child\":{\"age\":123}}")
+            .at("/child/age").isNotText();
+    }
+
+    @Test
+    void emptyText() {
+        assertJson("\"\"")
+            .isEmptyText();
+
+        // wrong type
+        assertThatThrownBy(() -> assertJson("0")
+            .isNotEmptyText())
+            .isInstanceOf(AssertionFailedError.class);
+
+        // non empty
+        assertJson("\"0\"")
+            .isNotEmptyText();
+    }
 
     @Test
     void assertAnElementIsPresent() {
@@ -79,6 +108,12 @@ class ExamplesTest {
     void customCondition_isEvenNumber() {
         assertJson("42")
                 .is("Even number", jsonNode -> jsonNode.isNumber() && jsonNode.asInt() % 2 == 0);
+    }
+
+    @Test
+    void customCondition_isNotEvenNumber() {
+        assertJson("43")
+            .isNot("Even number", jsonNode -> jsonNode.isNumber() && jsonNode.asInt() % 2 == 0);
     }
 
     private static <T, A extends CoreJsonAssertion<T, A>> A theUsual(JsonNodeAssertDsl<T, A> assertion) {
