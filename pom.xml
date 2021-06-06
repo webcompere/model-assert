@@ -7,10 +7,34 @@
   <groupId>uk.org.webcompere</groupId>
   <artifactId>ModelAssert</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-  <name>ModelAssert</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <name>Model Assert</name>
+  <description>Assertions for structured data</description>
+  <url>https://github.com/webcompere/model-assert</url>
+  <inceptionYear>2021</inceptionYear>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Ashley Frieze</name>
+      <email>ashley@ashleyfrieze.co.uk</email>
+      <organization>webcompere.org.uk</organization>
+      <organizationUrl>https://github.com/webcompere</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/webcompere/model-assert.git</connection>
+    <developerConnection>scm:git:git@github.com:webcompere/model-assert.git</developerConnection>
+    <url>https://github.com/webcompere/model-assert/</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -300,4 +324,57 @@
       </plugins>
     </pluginManagement>
   </build>
+
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <issueManagement>
+    <system>Github</system>
+    <url>https://github.com/webcompere/model-assert/issues</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>AppVeyor</system>
+    <url>https://ci.appveyor.com/project/ashleyfrieze/model-assert</url>
+  </ciManagement>
+
+  <profiles>
+    <!-- GPG Signature on release -->
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${version.maven-gpg-plugin}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
