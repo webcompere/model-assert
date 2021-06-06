@@ -1,9 +1,8 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
 import uk.org.webcompere.modelassert.json.Condition;
-import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
-public interface Satisfies<T, A extends CoreJsonAssertion<T, A>> {
+public interface Satisfies<A> {
     /**
      * Add a condition that the input JSON must satisfy
      * @param condition the condition

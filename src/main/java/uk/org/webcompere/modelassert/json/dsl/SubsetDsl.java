@@ -1,17 +1,15 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
 import uk.org.webcompere.modelassert.json.Condition;
-import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
 /**
  * Reduce the DSL down to a subset
- * @param <T> the type of source JSON
  * @param <A> the type of assertion
  */
-public class SubsetDsl<T, A extends CoreJsonAssertion<T, A>> implements Satisfies<T, A> {
-    private Satisfies<T, A> satisfies;
+public class SubsetDsl<A> implements Satisfies<A> {
+    private Satisfies<A> satisfies;
 
-    public SubsetDsl(Satisfies<T, A> satisfies) {
+    public SubsetDsl(Satisfies<A> satisfies) {
         this.satisfies = satisfies;
     }
 
