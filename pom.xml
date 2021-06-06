@@ -46,6 +46,14 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>4.2.3</version>
+      <scope>compile</scope>
+    </dependency>
+
+
     <!-- native assertion library -->
     <dependency>
       <groupId>org.opentest4j</groupId>

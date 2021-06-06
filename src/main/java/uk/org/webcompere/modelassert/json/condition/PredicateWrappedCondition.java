@@ -8,10 +8,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * A condition which checks the type of the node and then delegates to a further condition.
+ * A condition which checks a predicate for the node and then delegates to a further condition.
  * This can be used without a further condition, just to test the node type
  */
-public class TypedCondition implements Condition {
+public class PredicateWrappedCondition implements Condition {
     private Optional<Condition> delegate;
     private Predicate<JsonNode> typeDetector;
     private String typeName;
@@ -21,7 +21,7 @@ public class TypedCondition implements Condition {
      * @param typeName the name of the type for description
      * @param typeDetector detects if the node's the right type
      */
-    public TypedCondition(String typeName, Predicate<JsonNode> typeDetector) {
+    public PredicateWrappedCondition(String typeName, Predicate<JsonNode> typeDetector) {
         this.typeDetector = typeDetector;
         this.delegate = Optional.empty();
         this.typeName = typeName;
@@ -33,7 +33,7 @@ public class TypedCondition implements Condition {
      * @param typeDetector detects if the node's the right type
      * @param delegate the condition to hand over to, if the node's of the correct type
      */
-    public TypedCondition(String typeName, Predicate<JsonNode> typeDetector, Condition delegate) {
+    public PredicateWrappedCondition(String typeName, Predicate<JsonNode> typeDetector, Condition delegate) {
         this.delegate = Optional.ofNullable(delegate);
         this.typeDetector = typeDetector;
         this.typeName = typeName;

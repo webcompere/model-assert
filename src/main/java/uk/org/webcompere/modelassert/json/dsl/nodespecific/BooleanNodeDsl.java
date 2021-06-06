@@ -1,9 +1,12 @@
-package uk.org.webcompere.modelassert.json.dsl;
+package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.condition.HasValue;
-import uk.org.webcompere.modelassert.json.condition.TypedCondition;
+import uk.org.webcompere.modelassert.json.condition.PredicateWrappedCondition;
+import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
+
+import static uk.org.webcompere.modelassert.json.condition.Not.not;
 
 /**
  * Assertions for Boolean nodes
@@ -16,7 +19,7 @@ public interface BooleanNodeDsl<T, A extends CoreJsonAssertion<T, A>> extends Sa
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
      */
     default A isTrue() {
-        return satisfies(new TypedCondition("Boolean", JsonNode::isBoolean,
+        return satisfies(new PredicateWrappedCondition("Boolean", JsonNode::isBoolean,
                 new HasValue<>(JsonNode::asBoolean, true)));
     }
 
@@ -25,7 +28,7 @@ public interface BooleanNodeDsl<T, A extends CoreJsonAssertion<T, A>> extends Sa
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
      */
     default A isFalse() {
-        return satisfies(new TypedCondition("Boolean", JsonNode::isBoolean,
+        return satisfies(new PredicateWrappedCondition("Boolean", JsonNode::isBoolean,
                 new HasValue<>(JsonNode::asBoolean, false)));
     }
 
@@ -34,6 +37,14 @@ public interface BooleanNodeDsl<T, A extends CoreJsonAssertion<T, A>> extends Sa
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
      */
     default A isBoolean() {
-        return satisfies(new TypedCondition("Boolean", JsonNode::isBoolean));
+        return satisfies(new PredicateWrappedCondition("Boolean", JsonNode::isBoolean));
+    }
+
+    /**
+     * Assert that the node is not boolean
+     * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+     */
+    default A isNotBoolean() {
+        return satisfies(not(new PredicateWrappedCondition("Boolean", JsonNode::isBoolean)));
     }
 }

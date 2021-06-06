@@ -11,6 +11,9 @@ import static org.hamcrest.Matchers.not;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.json;
 
+/**
+ * Helpful assertions to help test the assertJson library
+ */
 public class TestAssertions {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -23,7 +26,7 @@ public class TestAssertions {
                 .describedAs("Negative test of fails")
                 .isInstanceOf(AssertionFailedError.class);
 
-        CoreJsonAssertion assertion = json().assertion();
+        CoreJsonAssertion assertion = json().is("ok", jsonNode -> true);
         addRules.accept(assertion);
         assertThat(actualThatPasses, assertion);
         assertThat(actualThatFails, not(assertion));

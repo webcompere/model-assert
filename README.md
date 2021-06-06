@@ -128,6 +128,23 @@ type specific assertions below, as well as:
   assertJson(jsonString)
     .at("/random").isMissing();
   ```
+- `isEmpty`/`isNotEmpty` - assert that the json at this location
+  is an empty text, array, or object node
+  ```java
+  assertJson(someJson)
+    .isEmpty();
+  ```
+  This can be combined with a more precise type check and a path in the json:
+  ```java
+  assertJson(someJson)
+    .at("/name").isText()
+    .at("/name").isEmpty();
+  ```
+  Though for brevity, the `isEmptyText`/`isNotEmptyText` may be easier:
+    ```java
+  assertJson(someJson)
+    .at("/name").isEmptyText();
+  ```
 - `matches(Matcher<JsonNode>)` - assert that the **node** found at this JSON path matches a hamcrest matcher for `JsonNode`
   ```java
   assertJson(jsonString)
@@ -142,6 +159,24 @@ type specific assertions below, as well as:
     .matches(jsonNode()  // jsonNode() creates a new matcher
        .at("/name").hasValue("Model")
        .at("/age").hasValue(42));
+  ```
+- `is`/`isNot` - provide a description and a `Predicate` to customise with a custom match condition
+  ```java
+  assertJson("42")
+    .is("Even number", jsonNode -> jsonNode.isNumber() && jsonNode.asInt() % 2 == 0);
+  ```
+- `is(Function)` - allows customisation with a standard set of match conditions - to modularise the tests:
+  ```java
+  @Test
+  void canApplyStandardSetOfAssertions() {
+      assertJson("{\"root\":{\"name\":\"Mr Name\"}}")
+        .is(ExamplesTest::theUsual)
+        .isNotEmpty(); // additional clause
+  }
+
+  private static <T, A extends CoreJsonAssertion<T, A>> A theUsual(JsonNodeAssertDsl<T, A> assertion) {
+      return assertion.at("/root/name").isText("Mr Name");
+  }
   ```
 
 ### String Context Conditions

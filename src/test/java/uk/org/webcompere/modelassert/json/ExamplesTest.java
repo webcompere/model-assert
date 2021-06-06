@@ -2,6 +2,8 @@ package uk.org.webcompere.modelassert.json;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
+import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 
@@ -50,5 +52,36 @@ class ExamplesTest {
         assertJson("{\"isOld\":false}")
                 .at("/isOld")
                 .isFalse();
+    }
+
+    @Test
+    void assertBooleanFieldIsBoolean() {
+        assertJson("{\"isOld\":false}")
+                .at("/isOld")
+                .isBoolean();
+    }
+
+    @Test
+    void assertBooleanFieldIsNotText() {
+        assertJson("{\"isOld\":false}")
+                .at("/isOld")
+                .isNotText();
+    }
+
+    @Test
+    void canApplyStandardSetOfAssertions() {
+        assertJson("{\"root\":{\"name\":\"Mr Name\"}}")
+                .is(ExamplesTest::theUsual)
+                .isNotEmpty(); // additional clause
+    }
+
+    @Test
+    void customCondition_isEvenNumber() {
+        assertJson("42")
+                .is("Even number", jsonNode -> jsonNode.isNumber() && jsonNode.asInt() % 2 == 0);
+    }
+
+    private static <T, A extends CoreJsonAssertion<T, A>> A theUsual(JsonNodeAssertDsl<T, A> assertion) {
+        return assertion.at("/root/name").isText("Mr Name");
     }
 }

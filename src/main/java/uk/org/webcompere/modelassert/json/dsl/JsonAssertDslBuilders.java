@@ -1,8 +1,8 @@
 package uk.org.webcompere.modelassert.json.dsl;
 
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.condition.JsonAt;
 import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
-import uk.org.webcompere.modelassert.json.impl.JsonAt;
 
 public class JsonAssertDslBuilders {
 
@@ -12,23 +12,23 @@ public class JsonAssertDslBuilders {
      * @param <A> the type of assertion
      */
     public static class At<T, A extends CoreJsonAssertion<T, A>> implements JsonNodeAssertDsl<T, A> {
-        private CoreJsonAssertion<T, A> assertion;
+        private Satisfies<T, A> satisfies;
         private String path;
 
         /**
          * Construct an at builder on a given assertion
-         * @param assertion the assertion that will receive the at condition
+         * @param satisfies the target for more conditions
          * @param path the JSON pointer to the path being asserted
          * @see com.fasterxml.jackson.databind.JsonNode#at
          */
-        public At(CoreJsonAssertion<T, A> assertion, String path) {
-            this.assertion = assertion;
+        public At(Satisfies<T, A> satisfies, String path) {
+            this.satisfies = satisfies;
             this.path = path;
         }
 
         @Override
         public A satisfies(Condition condition) {
-            return assertion.satisfies(new JsonAt(path, condition));
+            return satisfies.satisfies(new JsonAt(path, condition));
         }
     }
 }
