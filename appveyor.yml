@@ -1,0 +1,9 @@
+version: '{build}'
+image:
+  - Ubuntu
+build_script:
+  - ./mvnw clean package -DskipTests
+test_script:
+  - ./mvnw clean verify
+after_test:
+  - sh: CODECOV_TOKEN='6a02e79f-7d28-4a25-a863-64d9762ba037' bash <(curl -s https://codecov.io/bash)

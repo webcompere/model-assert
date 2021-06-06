@@ -1,5 +1,8 @@
 # ModelAssert
 
+[![Build status](https://ci.appveyor.com/api/projects/status/x87jeu1yia9b40bp?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/model-assert) [![codecov](https://codecov.io/gh/webcompere/model-assert/branch/main/graph/badge.svg?token=SJ9ZKQVO5T)](https://codecov.io/gh/webcompere/model-assert)
+
+
 Assertions for model data. Inspired by [JSONAssert](https://github.com/skyscreamer/JSONassert)
 and [AssertJ](https://assertj.github.io/doc/). Built on top of [Jackson](https://github.com/FasterXML/jackson).
 
@@ -38,7 +41,7 @@ construction of a hamcrest matcher which conditions are added to.
 These are evaluated when the hamcrest matcher's `matches` is called.
 
 > Note: the DSL is intended to provide auto-complete and is largely fluent.
-> It's also composable, so multiple comparisons can be added after the 
+> It's also composable, so multiple comparisons can be added after the
 > last one is complete:
 
 ```java
@@ -80,7 +83,7 @@ There are multiple contexts from which assertions are available:
 - Node - this allows any assertion on the current node, which may be of any valid json type as well as `missing`
 - Type specific - by calling `number`, `text`, `object`, `array`, or `boolean` on a node context DSL, the DSL
 can be narrowed down to assertions for just that type - this can also be more expressive
-  
+
 ```java
 assertJson(json)
    .at("/name").text().isText("My Name");
@@ -150,7 +153,7 @@ type specific assertions below, as well as:
   assertJson(jsonString)
     .at("/child/someobject").matches(customHamcrestMatcher);
   ```
-  This latter example, allows us to reuse the hamcrest form of the 
+  This latter example, allows us to reuse the hamcrest form of the
   json assertion across tests, if there's a common pattern, or allows
   us to apply a particular set of assertions to only a subtree of the original:
   ```java
@@ -198,7 +201,7 @@ some extra checking that this is a text node
   ```
   More specific typed versions - `isGreaterThanInt` or `isLessThanLong` also exist to avoid a test
   passing through accidental type coercion or overflow.
-  
+
 ## Interoperability
 
 The assertions can be used stand-alone with `assertJson` or can be built as Hamcrest matchers. The assertion
