@@ -5,7 +5,7 @@ import uk.org.webcompere.modelassert.json.condition.IsEmpty;
 import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
-public interface Sizeable<T, A extends CoreJsonAssertion<T, A>> extends Satisfies<T, A> {
+public interface Sizeable<A> extends Satisfies<A> {
     /**
      * Depending on the type of node, this will detect <em>emptiness</em>
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added

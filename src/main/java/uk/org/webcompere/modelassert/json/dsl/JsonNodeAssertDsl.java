@@ -17,8 +17,8 @@ import static uk.org.webcompere.modelassert.json.condition.Not.not;
  * @param <A> the type of the ultimate assertion
  */
 public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
-        extends Satisfies<T, A>, TextNodeDsl<T, A>, NumberNodeDsl<T, A>,
-        BooleanNodeDsl<T, A>, ObjectNodeDsl<T, A>, ArrayNodeDsl<T, A> {
+        extends Satisfies<A>, TextNodeDsl<A>, NumberNodeDsl<A>,
+        BooleanNodeDsl<A>, ObjectNodeDsl<A>, ArrayNodeDsl<A> {
 
     /**
      * Assert that the node has a value is equal to the given object
@@ -104,7 +104,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * Switch to number context
      * @return a subset of the DSL with just the numeric options
      */
-    default NumberNodes<T, A> number() {
+    default NumberNodes<A> number() {
         return new NumberNodes<>(this);
     }
 
@@ -112,7 +112,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * Switch to string context
      * @return a subset of the DSL with just the numeric options
      */
-    default TextNodes<T, A> text() {
+    default TextNodes<A> text() {
         return new TextNodes<>(this);
     }
 
@@ -120,7 +120,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * Switch to boolean context
      * @return a subset of the DSL with just the boolean options
      */
-    default BooleanNodes<T, A> booleanNode() {
+    default BooleanNodes<A> booleanNode() {
         return new BooleanNodes<>(this);
     }
 
@@ -128,7 +128,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * Switch to array context
      * @return a subset of the DSL with just the boolean options
      */
-    default ArrayNodes<T, A> array() {
+    default ArrayNodes<A> array() {
         return new ArrayNodes<>(this);
     }
 
@@ -136,7 +136,7 @@ public interface JsonNodeAssertDsl<T, A extends CoreJsonAssertion<T, A>>
      * Switch to object context
      * @return a subset of the DSL with just the boolean options
      */
-    default ObjectNodes<T, A> object() {
+    default ObjectNodes<A> object() {
         return new ObjectNodes<>(this);
     }
 

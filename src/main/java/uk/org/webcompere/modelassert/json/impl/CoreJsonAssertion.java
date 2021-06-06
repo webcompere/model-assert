@@ -9,6 +9,7 @@ import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.condition.JsonIsNotNull;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
+import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +23,7 @@ import static java.util.stream.Collectors.joining;
  * @param <A> the type of the assertion subclass, into which the fluent methods cast <code>this</code>
  */
 public abstract class CoreJsonAssertion<T, A extends CoreJsonAssertion<T, A>> extends BaseMatcher<T>
-        implements JsonNodeAssertDsl<T, A>, uk.org.webcompere.modelassert.json.dsl.Satisfies<T, A> {
+        implements JsonNodeAssertDsl<T, A>, Satisfies<A> {
 
     private JsonProvider<T> jsonProvider;
     private List<Condition> conditions = new LinkedList<>();

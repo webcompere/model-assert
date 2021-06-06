@@ -8,11 +8,10 @@ public class JsonAssertDslBuilders {
 
     /**
      * Builder of an <code>at</code> condition, for JSON Pointer comparison
-     * @param <T> type of the input value to the assertion
      * @param <A> the type of assertion
      */
     public static class At<T, A extends CoreJsonAssertion<T, A>> implements JsonNodeAssertDsl<T, A> {
-        private Satisfies<T, A> satisfies;
+        private Satisfies<A> satisfies;
         private String path;
 
         /**
@@ -21,7 +20,7 @@ public class JsonAssertDslBuilders {
          * @param path the JSON pointer to the path being asserted
          * @see com.fasterxml.jackson.databind.JsonNode#at
          */
-        public At(Satisfies<T, A> satisfies, String path) {
+        public At(Satisfies<A> satisfies, String path) {
             this.satisfies = satisfies;
             this.path = path;
         }

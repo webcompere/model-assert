@@ -10,10 +10,9 @@ import static uk.org.webcompere.modelassert.json.condition.Not.not;
 
 /**
  * Assertions specific to object nodes
- * @param <T> type of the json
  * @param <A> the assertion type
  */
-public interface ObjectNodeDsl<T, A extends CoreJsonAssertion<T, A>> extends Satisfies<T, A>, Sizeable<T, A> {
+public interface ObjectNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
     /**
      * Assert that the value is an object, meeting an additional condition
      * @param condition the number condition
