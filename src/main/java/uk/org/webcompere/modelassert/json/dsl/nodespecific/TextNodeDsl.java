@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.condition.HasValue;
 import uk.org.webcompere.modelassert.json.condition.IsEmpty;
-import uk.org.webcompere.modelassert.json.condition.MatchesCondition;
+import uk.org.webcompere.modelassert.json.condition.MatchesTextCondition;
 import uk.org.webcompere.modelassert.json.condition.PredicateWrappedCondition;
 import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static uk.org.webcompere.modelassert.json.condition.Not.not;
@@ -32,7 +33,7 @@ public interface TextNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
      * @return the assertion for fluent assertions, with this condition added
      */
     default A matches(Pattern regex) {
-        return satisfiesTextCondition(new MatchesCondition(regex));
+        return satisfiesTextCondition(new MatchesTextCondition(regex));
     }
 
     /**
@@ -41,7 +42,17 @@ public interface TextNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
      * @return the assertion for fluent assertions, with this condition added
      */
     default A matches(String regex) {
-        return satisfiesTextCondition(new MatchesCondition(Pattern.compile(regex)));
+        return satisfiesTextCondition(new MatchesTextCondition(Pattern.compile(regex)));
+    }
+
+    /**
+     * Assert that the text matches a custom predicate
+     * @param conditionName the name of the condition
+     * @param predicate the required condition
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A textMatches(String conditionName, Predicate<String> predicate) {
+        return satisfiesTextCondition(new MatchesTextCondition(conditionName, predicate));
     }
 
     /**
@@ -83,5 +94,23 @@ public interface TextNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
      */
     default A isNotEmptyText() {
         return satisfiesTextCondition(not(new IsEmpty()));
+    }
+
+    /**
+     * Assert that the text of this node contains a substring
+     * @param substring the substring to find
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A textContains(String substring) {
+        return satisfiesTextCondition(MatchesTextCondition.textContains(substring));
+    }
+
+    /**
+     * Assert that the text of this node contains a substring
+     * @param substring the substring to find
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A textDoesNotContain(String substring) {
+        return satisfiesTextCondition(not(MatchesTextCondition.textContains(substring)));
     }
 }

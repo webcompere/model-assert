@@ -29,7 +29,7 @@ class TextNodeDslTest {
     @Test
     void isEmptyText() {
         assertAllWays("\"\"", "\"Jason\"",
-                JsonNodeAssertDsl::isEmpty);
+                JsonNodeAssertDsl::isEmptyText);
     }
 
     @Test
@@ -62,5 +62,33 @@ class TextNodeDslTest {
         assertAllWays("{\"guid\":\"625110f5-502f-4748-8f1d-bad2237aa0aa\"}",
                 "{\"guid\":\"not-a-guid\"}",
                 assertion -> assertion.at("/guid").matches(GUID_PATTERN.pattern()));
+    }
+
+    @Test
+    void textMatches() {
+        assertAllWays("\"625110f5-502f-4748-8f1d-bad2237aa0aa\"",
+            "\"not-a-guid\"",
+            assertion -> assertion.matches(GUID_PATTERN));
+    }
+
+    @Test
+    void textContains() {
+        assertAllWays("\"625110f5-502f-4748-8f1d-bad2237aa0aa\"",
+            "\"not-a-guid\"",
+            assertion -> assertion.textContains("bad2237aa0aa"));
+    }
+
+    @Test
+    void textDoesNotContain() {
+        assertAllWays("\"625110f5-502f-4748-8f1d-bad2237aa0aa\"",
+            "\"not-a-guid\"",
+            assertion -> assertion.textDoesNotContain("guid"));
+    }
+
+    @Test
+    void textMatchesPredicate() {
+        assertAllWays("\"625110f5-502f-4748-8f1d-bad2237aa0aa\"",
+            "\"not a guid\"",
+            assertion -> assertion.textMatches("Has dashes", text -> text.contains("-")));
     }
 }
