@@ -20,6 +20,8 @@ t.b.c.
 
 ## Quickstart
 
+### Path Assertions
+
 ```java
 String json = "{\"name\":\"ModelAssert\"}";
 
@@ -33,9 +35,28 @@ MatcherAssert.assertThat(json,
       .at("/name").hasValue("ModelAssert"));
 ```
 
-There are more examples in the unit tests, especially [`ExamplesTest`](src/test/java/uk/org/webcompere/modelassert/json/ExamplesTest.java).
-
 In the above example, `at` is just one of the possible conditions. Here we see Jackson's JSON Pointer syntax in action too.
+
+### Whole JSON Comparison
+
+Semantic comparison of the JSON loaded as both expected and actual.
+
+```java
+// assertJ style
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .isEqualTo("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}");
+
+// hamcrest style
+MatcherAssert.assertThat("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}",
+    json().isEqualTo("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}"));
+```
+
+These comparisons can be mixed with path matchers, but they compare the whole
+object structure and report the differences on error, so there's minimum benefit in using both.
+
+### Assertion DSL
+
+There are more examples in the unit tests, especially [`ExamplesTest`](src/test/java/uk/org/webcompere/modelassert/json/ExamplesTest.java).
 
 The `assertJson` methods produces stand-alone assertions which
 execute each clause in order, stopping on error.

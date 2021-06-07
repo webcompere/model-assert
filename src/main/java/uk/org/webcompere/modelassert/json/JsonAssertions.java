@@ -1,18 +1,18 @@
 package uk.org.webcompere.modelassert.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.org.webcompere.modelassert.json.assertjson.AssertJson;
 import uk.org.webcompere.modelassert.json.dsl.HamcrestJsonAssertionBuilder;
 
 import java.io.File;
 import java.nio.file.Path;
 
+import static uk.org.webcompere.modelassert.json.impl.JsonProviders.*;
+
 /**
  * Jumping on point - create either an assertJson or a hamcrest. Facade/factory methods.
  */
 public class JsonAssertions {
-    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * Begin an <code>assertJson</code> style assertion
@@ -20,7 +20,7 @@ public class JsonAssertions {
      * @return an {@link AssertJson} object for adding assertions to
      */
     public static AssertJson<String> assertJson(String json) {
-        return new AssertJson<>(OBJECT_MAPPER::readTree, json);
+        return new AssertJson<>(jsonStringProvider(), json);
     }
 
     /**
@@ -38,7 +38,7 @@ public class JsonAssertions {
      * @return an {@link AssertJson} object for adding assertions to
      */
     public static AssertJson<File> assertJson(File file) {
-        return new AssertJson<>(OBJECT_MAPPER::readTree, file);
+        return new AssertJson<>(jsonFileProvider(), file);
     }
 
     /**
@@ -55,7 +55,7 @@ public class JsonAssertions {
      * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<String> json() {
-        return new HamcrestJsonAssertionBuilder<>(OBJECT_MAPPER::readTree);
+        return new HamcrestJsonAssertionBuilder<>(jsonStringProvider());
     }
 
     /**
@@ -71,7 +71,7 @@ public class JsonAssertions {
      * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<File> jsonFile() {
-        return new HamcrestJsonAssertionBuilder<>(OBJECT_MAPPER::readTree);
+        return new HamcrestJsonAssertionBuilder<>(jsonFileProvider());
     }
 
     /**
@@ -79,6 +79,7 @@ public class JsonAssertions {
      * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<Path> jsonFilePath() {
-        return new HamcrestJsonAssertionBuilder<>(path -> OBJECT_MAPPER.readTree(path.toFile()));
+        return new HamcrestJsonAssertionBuilder<>(jsonPathProvider());
     }
+
 }
