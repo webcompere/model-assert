@@ -3,11 +3,12 @@ package uk.org.webcompere.modelassert.json;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
+import uk.org.webcompere.modelassert.json.condition.ConditionList;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
-import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
+import static uk.org.webcompere.modelassert.json.condition.ConditionList.conditions;
 
 @DisplayName("Some usage examples")
 class ExamplesTest {
@@ -29,12 +30,12 @@ class ExamplesTest {
         assertJson("\"\"")
             .isEmptyText();
 
-        // wrong type
+        // wrong type - so this would be an assertion failure
         assertThatThrownBy(() -> assertJson("0")
             .isNotEmptyText())
             .isInstanceOf(AssertionFailedError.class);
 
-        // non empty
+        // non empty string passes assertion
         assertJson("\"0\"")
             .isNotEmptyText();
     }
@@ -67,6 +68,18 @@ class ExamplesTest {
     void assertBooleanNodeIsTrue() {
         assertJson("true")
                 .isTrue();
+    }
+
+    @Test
+    void assertNullWithIsNull() {
+        assertJson("null")
+            .isNull();
+    }
+
+    @Test
+    void assertNullWithHasValue() {
+        assertJson("null")
+            .hasValue(null);
     }
 
     @Test
@@ -116,7 +129,54 @@ class ExamplesTest {
             .isNot("Even number", jsonNode -> jsonNode.isNumber() && jsonNode.asInt() % 2 == 0);
     }
 
-    private static <T, A extends CoreJsonAssertion<T, A>> A theUsual(JsonNodeAssertDsl<T, A> assertion) {
+    @Test
+    void complexAssertionsOnArrayWithConditionList() {
+        assertJson("[" +
+            "{\"name\":\"Model\",\"ok\":true}," +
+            "{\"name\":\"Model\",\"ok\":false}," +
+            "{\"name\":\"Assert\"}," +
+            "{\"age\":1234}" +
+            "]")
+            .isArrayContainingExactlyInAnyOrder(conditions()
+                .at("/name").isText("Assert")
+                .at("/name").hasValue("Model")
+                .at("/ok").isFalse()
+                .at("/age").isNumberEqualTo(1234));
+    }
+
+    @Test
+    void deeperComplexityOnArrayWithConditionList() {
+        assertJson("[" +
+            "{\"name\":\"Model\",\"ok\":true}," +
+            "{\"name\":\"Model\",\"ok\":false}," +
+            "{\"name\":\"Model\"}," +
+            "{\"age\":1234}" +
+            "]")
+            .isArrayContainingExactlyInAnyOrder(conditions()
+                .at("/name").isText("Model")
+                .satisfies(conditions()
+                    .at("/name").hasValue("Model")
+                    .at("/ok").isTrue())
+                .satisfies(conditions()
+                    .at("/ok").isFalse()
+                    .at("/name").isText("Model"))
+                .at("/age").isNumberEqualTo(1234));
+    }
+
+    @Test
+    void subtreeAssertionsWithConditionList() {
+        assertJson("[" +
+            "{\"name\":\"Model\",\"ok\":true}," +
+            "{\"name\":\"Model\",\"ok\":false}," +
+            "{\"name\":\"Model\"}," +
+            "{\"age\":1234}" +
+            "]")
+            .at("/1").satisfies(conditions()
+                    .at("/name").hasValue("Model")
+                    .at("/ok").isFalse());
+    }
+
+    private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {
         return assertion.at("/root/name").isText("Mr Name");
     }
 }

@@ -34,6 +34,16 @@ public class Result {
         return this;
     }
 
+    /**
+     * Change the description of the condition
+     * @param condition new description
+     * @return this for fluent calls
+     */
+    public Result withNewDescription(String condition) {
+        this.condition = condition;
+        return this;
+    }
+
     public String getWas() {
         return was;
     }

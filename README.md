@@ -21,7 +21,7 @@ t.b.c.
 ## Quickstart
 
 ```java
-String json = "{.... some json ...}";
+String json = "{\"name\":\"ModelAssert\"}";
 
 // assertJ style
 assertJson(json)
@@ -30,16 +30,18 @@ assertJson(json)
 // hamcrest style
 MatcherAssert.assertThat(json,
     json()
-        .at("/name").hasValue());
+      .at("/name").hasValue("ModelAssert"));
 ```
 
-`at` is one possible condition, in this case using Jackson's JSON Pointer syntax.
+There are more examples in the unit tests, especially [`ExamplesTest`](src/test/java/uk/org/webcompere/modelassert/json/ExamplesTest.java).
+
+In the above example, `at` is just one of the possible conditions. Here we see Jackson's JSON Pointer syntax in action too.
 
 The `assertJson` methods produces stand-alone assertions which
 execute each clause in order, stopping on error.
 
 The `json*` methods - `json`, `jsonNode`, `jsonFile`, `jsonFilePath` start the
-construction of a hamcrest matcher which conditions are added to.
+construction of a hamcrest matcher to which conditions are added.
 These are evaluated when the hamcrest matcher's `matches` is called.
 
 > Note: the DSL is intended to provide auto-complete and is largely fluent.
@@ -95,22 +97,29 @@ assertJson(json)
 
 Build a `JsonAt` condition by using `.at("/some/json/pointer")`.
 
-This is then followed by any of node context assertions.
+This is then followed by any of the node context assertions.
 
 Example:
 
 ```java
-assertJson("{\"name\":null})
+assertJson("{\"name\":null}")
     .at("/name").isNull();
 ```
 
-The `JsonAt` expression is incomplete with just `at`, but once the condition is added,
+The `JsonAt` expression is incomplete with just `at`, but once the rest of the condition is added,
 the `this` returned belongs to the main assertion, allowing them to be chained.
 
 ```java
 assertJson("{\"name\":null}")
     .at("/name").isNull()
     .at("/address").isMissing();
+```
+
+JSON Pointer expressions treat field names and array indices as `/` delimited:
+
+```java
+assertJson("{\"names\":[\"Model\",\"Assert\"]}")
+    .at("/names/1").hasValue("Assert");
 ```
 
 ### Node Context Assertions
@@ -123,6 +132,8 @@ type specific assertions below, as well as:
   assertJson(jsonString)
     .at("/name").hasValue("ModelAssert");
   ```
+  > Note: this is very forgiving of type, and may be less precise as
+  > a consequence. It detects the expected node type from its input.
 - `isNull`/`isNotNull` - assert whether this path resolves to `null`
   ```java
   assertJson(jsonString)
@@ -165,6 +176,19 @@ type specific assertions below, as well as:
        .at("/name").hasValue("Model")
        .at("/age").hasValue(42));
   ```
+  > Note: `satifies` along with `ConditionList` may be a better solution to subtree
+  > assertions with `at`
+  > ```java
+  > assertJson("[" +
+  >   "{\"name\":\"Model\",\"ok\":true}," +
+  >   "{\"name\":\"Model\",\"ok\":false}," +
+  >   "{\"name\":\"Model\"}," +
+  >   "{\"age\":1234}" +
+  >   "]")
+  >   .at("/1").satisfies(conditions()
+  >     .at("/name").hasValue("Model")
+  >     .at("/ok").isFalse());
+  >```
 - `is`/`isNot` - provide a description and a `Predicate<JsonNode>` to customise with a custom match condition
   > This is the unlimited customisable assertion - allowing any test to be done on a per node basis, if it's
   > not already part of the DSL
@@ -180,8 +204,7 @@ type specific assertions below, as well as:
         .is(ExamplesTest::theUsual)
         .isNotEmpty(); // additional clause
   }
-
-  private static <T, A extends CoreJsonAssertion<T, A>> A theUsual(JsonNodeAssertDsl<T, A> assertion) {
+  private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {
       return assertion.at("/root/name").isText("Mr Name");
   }
   ```
@@ -239,14 +262,102 @@ some extra checking that this is a text node
 - `isTrue`/`isFalse` - requires the node to be boolean and have the correct value
 - `isBoolean`/`isNotBoolean` - asserts the type of the node
 
-### Array Context Conditions
-- `isArray`/`isNotArray` - asserts the type of the node
-
 ### Object Context Conditions
 - `isObject`/`isNotObject` - asserts the type of the node
 - `containsKey`/`containsKeys`/`doesNotContainKey`/`doesNotContainKeys` - checks for the presence of a given set of keys in the object
 - `containsKeysExactly` - requires the given keys to be present in the exact order provided
 - `containsKeysExactlyInAnyOrder` - requires the given keys all to be present, regardless of order in the JSON
+
+### Array Context Conditions
+- `isArray`/`isNotArray` - asserts the type of the node
+- `isArrayContaining`/`isArrayContainingExactlyInAnyOrder` - **potentially slow** assertions over the contents
+   of an array. Tries all permutations of matching the provided elements to the array elements, allowing for
+   duplicates. Uses loose `hasValue` style matching when values provided:
+   ```java
+   assertJson("[1, 2, 3, 4]")
+      .isArrayContaining(1, 4);
+
+   assertJson("[1, 2, 3, 4]")
+      .isArrayContainingExactlyInAnyOrder(1, 2, 3, 4);
+   ```
+- `isArrayContainingExactly` - strictly proves that each element in the array
+  matches the elements provided:
+  ```java
+    assertJson("[1, 2, 3, 4]")
+      .isArrayContainingExactly(1, 2, 3, 4);
+  ```
+  This is more efficient at runtime as it has a simple job.
+
+There are two main ways to assert the contents of an array. It can be done by
+value as illustrated above, or it can be done by condition list.
+
+To use the `isArrayContaining` suite of functions with a condition list,
+we call `conditions()` within the `ConditionList` class to create a
+fluent builder of a list of conditions. As the fluent builder for assertions
+adds conditions to the assertion, so the fluent builder inside
+`ConditionList` treats each additional condition as an element to search for
+in the array:
+
+```java
+assertJson("[" +
+    "{\"name\":\"Model\",\"ok\":true}," +
+    "{\"name\":\"Model\",\"ok\":false}," +
+    "{\"name\":\"Assert\"}," +
+    "{\"age\":1234}" +
+    "]")
+    .isArrayContainingExactlyInAnyOrder(conditions()
+        .at("/name").isText("Assert")
+        .at("/name").hasValue("Model")
+        .at("/ok").isFalse()
+        .at("/age").isNumberEqualTo(1234));
+```
+
+In the above example, the conditions, between them, represent a unique
+match in each element of the list, but a condition may match more than one
+element (as `.at("/name".isText("Assert")` does). This is where the
+permutational search of the ArrayCondition helps to find the best possible match.
+
+Where a single condition cannot describe the required match for an element
+then `satisfies`, which is part of every node, allows a `ConditionList`:
+
+```java
+assertJson("[" +
+    "{\"name\":\"Model\",\"ok\":true}," +
+    "{\"name\":\"Model\",\"ok\":false}," +
+    "{\"name\":\"Model\"}," +
+    "{\"age\":1234}" +
+    "]")
+    .isArrayContainingExactlyInAnyOrder(conditions()
+        // condition A
+        .at("/name").isText("Model")
+
+        // condition B
+        .satisfies(conditions()
+            .at("/name").hasValue("Model")
+            .at("/ok").isTrue())
+
+        // condition C
+        .satisfies(conditions()
+            .at("/ok").isFalse()
+            .at("/name").isText("Model"))
+
+        // condition D
+        .at("/age").isNumberEqualTo(1234));
+```
+
+Each of these composite conditions allows the whole DSL. They're
+composed together using `Condition.and`.
+
+> A Hamcrest matcher could also be used with `ConditionList`
+> via `matches(Matcher<JsonNode>)`
+
+## Customisation
+
+There's room for custom assertions throughout the DSL, and if necessary,
+the `Satisfies` interface, allows a condition to be added fluently. Conditions
+are based on the `Condition` class. The existing conditions can be used directly
+if necessary, and can be composed using `Condition.and` where needed. Similarly, there's
+a `not` method in the `Condition` class `Not` to invert any condition.
 
 ## Interoperability
 

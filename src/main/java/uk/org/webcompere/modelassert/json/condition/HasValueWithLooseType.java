@@ -40,6 +40,11 @@ public class HasValueWithLooseType implements Condition {
         if (expected instanceof String && node.isTextual()) {
             return new Result(describe(), was, node.textValue().equals(expected));
         }
+
+        if (expected instanceof Boolean && node.isBoolean()) {
+            return new Result(describe(), was, node.booleanValue() == (Boolean)expected);
+        }
+
         return new Result(describe(), was, false);
     }
 
