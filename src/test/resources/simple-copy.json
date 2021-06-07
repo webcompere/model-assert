@@ -1,0 +1,10 @@
+{
+  "name": "Mr Name",
+  "age": 42,
+  "isOld": true,
+  "child": {
+    "name": "Ms Child",
+    "age": 7,
+    "isOld": false
+  }
+}

@@ -1,13 +1,16 @@
 package uk.org.webcompere.modelassert.json;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
-import uk.org.webcompere.modelassert.json.condition.ConditionList;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
+
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.json;
 import static uk.org.webcompere.modelassert.json.condition.ConditionList.conditions;
 
 @DisplayName("Some usage examples")
@@ -174,6 +177,30 @@ class ExamplesTest {
             .at("/1").satisfies(conditions()
                     .at("/name").hasValue("Model")
                     .at("/ok").isFalse());
+    }
+
+    @Test
+    void compareWholeJsonTree() {
+        assertJson(Paths.get("src", "test", "resources", "simple.json"))
+            .isEqualTo(Paths.get("src", "test", "resources", "simple-copy.json"));
+    }
+
+    @Test
+    void compareWholeJsonTreeByString() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .isEqualTo("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}");
+    }
+
+    @Test
+    void compareWholeJsonTreeByStringHamcrest() {
+        MatcherAssert.assertThat("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}",
+            json().isEqualTo("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}"));
+    }
+
+    @Test
+    void compareWholeJsonTreeByStringAndNotEqual() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .isNotEqualTo("{\"versions\":[1.00, 1.01, 1.02]}, \"name\":\"ModelAssert\"");
     }
 
     private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {

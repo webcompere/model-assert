@@ -17,7 +17,7 @@ import static uk.org.webcompere.modelassert.json.condition.Not.not;
  */
 public interface JsonNodeAssertDsl<A>
         extends Satisfies<A>, TextNodeDsl<A>, NumberNodeDsl<A>,
-        BooleanNodeDsl<A>, ObjectNodeDsl<A>, ArrayNodeDsl<A> {
+        BooleanNodeDsl<A>, ObjectNodeDsl<A>, ArrayNodeDsl<A>, TreeComparisonDsl<A> {
 
     /**
      * Assert that the node has a value is equal to the given object
