@@ -16,6 +16,7 @@ import static uk.org.webcompere.modelassert.json.JsonAssertions.*;
 class JsonAssertionsTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Path SIMPLE_JSON = Paths.get("src", "test", "resources", "simple.json");
+    private static final Path SIMPLE_YAML = Paths.get("src", "test", "resources", "simple.yaml");
 
     @Test
     void jsonAtInHamcrest() {
@@ -118,5 +119,17 @@ class JsonAssertionsTest {
         assertThat(SIMPLE_JSON.toFile(), jsonFile()
                 .at("/child/name")
                 .hasValue("Ms Child"));
+    }
+
+    @Test
+    void compareYamlWithJson() {
+        assertYaml(SIMPLE_YAML)
+            .isEqualTo(SIMPLE_JSON);
+    }
+
+    @Test
+    void compareJsonWithYaml() {
+        assertJson(SIMPLE_JSON)
+            .isEqualToYaml(SIMPLE_JSON);
     }
 }

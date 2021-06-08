@@ -13,7 +13,7 @@ public class StringPathMatcher implements PathMatcher {
 
     @Override
     public boolean matches(Location location, List<PathMatcher> remaining) {
-        return value.equals(location.first()) && matchesTheRest(location, remaining);
+        return value.equals(location.first()) && matchesTheRest(location.peelOffFirst(), remaining);
     }
 
     @Override

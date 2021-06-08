@@ -20,13 +20,15 @@ public class WildCardPathMatcher implements PathMatcher {
               return new PatternPathMatcher(ANY_FIELD_PATTERN).matches(location, remaining);
           case ANY_SUBTREE:
               Location currentLocation = location;
-              while (currentLocation.size() >= remaining.size()) {
-                  if (remaining.isEmpty()) {
+              if (remaining.isEmpty()) {
+                  return true;
+              }
+              while (!currentLocation.isEmpty()) {
+                  if (PathMatcher.matchesTheRest(currentLocation, remaining)) {
                       return true;
                   }
-                  if (remaining.get(0).matches(currentLocation, remaining.subList(1, remaining.size()))) {
-                      return true;
-                  }
+
+                  // otherwise, the subtree can absorb this level of the location and try again
                   currentLocation = currentLocation.peelOffFirst();
               }
               return false;

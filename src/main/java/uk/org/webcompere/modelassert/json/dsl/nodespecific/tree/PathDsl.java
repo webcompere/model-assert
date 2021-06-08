@@ -18,8 +18,23 @@ public class PathDsl<A> implements JsonNodeAssertDsl<WhereDsl<A>> {
     private PathMatch pathMatch;
 
     PathDsl(WhereDsl<A> whereDsl, Object pathStart, Object... pathRemainder) {
+        this(whereDsl, new PathMatch(pathStart, pathRemainder));
+    }
+
+    private PathDsl(WhereDsl<A> whereDsl, PathMatch pathMatch) {
         this.whereDsl = whereDsl;
-        this.pathMatch = new PathMatch(pathStart, pathRemainder);
+        this.pathMatch = pathMatch;
+    }
+
+    /**
+     * Create a path DSL from a JSON Pointer expression
+     * @param where the parent where
+     * @param jsonPointer the pointer expression
+     * @param <A> the type of assertion
+     * @return a new {@link PathDsl} for adding configuration to
+     */
+    public static <A> PathDsl<A> fromJsonPointer(WhereDsl<A> where, String jsonPointer) {
+        return new PathDsl<>(where, PathMatch.ofJsonPointer(jsonPointer));
     }
 
     // overridden here to bridge back to the where dsl

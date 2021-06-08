@@ -89,6 +89,58 @@ assertJson(json)
    .at("/price").isNull();
 ```
 
+### Non JSON Comparison
+
+If an object can be converted into Jackson's `JsonNode` structure, which nearly everything can be,
+then it can be compared using ModelAssert:
+
+```java
+Map<String, Object> objectMap = new HashMap<>();
+objectMap.put("a", UUID.randomUUID().toString());
+objectMap.put("b", UUID.randomUUID().toString());
+
+Map<String, Object> expectedMap = new HashMap<>();
+expectedMap.put("a", "");
+expectedMap.put("b", "");
+
+assertJson(objectMap)
+    .where()
+    .path(Pattern.compile("[ab]")).matches(GUID_PATTERN)
+    .isEqualTo(expectedMap);
+```
+
+As both `assertJson` and `isEqualTo` allow `JsonNode` as an input,
+custom conversions to this can be used from any source.
+
+### YAML Support
+
+As Jackson can load yaml files, the DSL also supports `assertYaml` and `isEqualToYaml`/`isNotEqualToYaml`:
+
+```java
+String yaml1 =
+    "name: Mr Yaml\n" +
+        "age: 42\n" +
+        "items:\n" +
+        "  - a\n" +
+        "  - b\n";
+
+String yaml2 =
+    "name: Mrs Yaml\n" +
+        "age: 43\n" +
+        "items:\n" +
+        "  - c\n" +
+        "  - d\n";
+
+assertYaml(yaml1)
+    .isNotEqualToYaml(yaml2);
+```
+
+The Hamcrest version of this uses `yaml`/`yamlFile` and `yamlFilePath`:
+
+```java
+MatcherAssert.assertThat(yaml1, yaml().isEqualToYaml(yaml2));
+```
+
 ## Building the Assertion
 
 The entry point to creating an assertion is:
@@ -429,6 +481,7 @@ for particular paths.
   - `String` - conforming to a JSON Pointer, but no `/`
   - Regular expression for matching a field - i.e. `Pattern`
   - `PathWildCard` - either `ANY_FIELD` or `ANY_SUBTREE` - allowing path matching of one or n levels of fields
+- `at` - a synonym for `path` where the whole JSON Pointer style path is provided - this is a short-hand for paths where there are no wildcards
 
 Within the path expression, we then add further conditions:
 
@@ -458,6 +511,21 @@ assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
 Here, the `path(ANY_SUBTREE, "guid").matches(GUID_PATTERN)` phrase is
 allowing anything _ending_ in `guid` to be matched using `matches(GUID_PATTERN)`
 instead of matching it against the JSON inside `isEqualTo`.
+
+This can be done more specifically using `at`:
+
+```java
+assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
+    "\"b\":{\"guid\":\"96734f31-33c3-4e50-a72b-49bf2d990e33\"}," +
+    "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0-bf36-1994104aa870\"}}")
+    .where()
+        .at("/a/guid").matches(GUID_PATTERN)
+        .at("/b/guid").matches(GUID_PATTERN)
+        .at("/c/guid").matches(GUID_PATTERN)
+    .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
+        "\"b\":{\"guid\":\"?\"}," +
+        "\"c\":{\"guid\":\"?\"}}");
+```
 
 ## Customisation
 
