@@ -11,7 +11,9 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.json;
+import static uk.org.webcompere.modelassert.json.Patterns.GUID_PATTERN;
 import static uk.org.webcompere.modelassert.json.condition.ConditionList.conditions;
+import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
 
 @DisplayName("Some usage examples")
 class ExamplesTest {
@@ -200,7 +202,58 @@ class ExamplesTest {
     @Test
     void compareWholeJsonTreeByStringAndNotEqual() {
         assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
-            .isNotEqualTo("{\"versions\":[1.00, 1.01, 1.02]}, \"name\":\"ModelAssert\"");
+            .isNotEqualTo("{\"versions\":[1.00, 1.01, 1.02], \"name\":\"ModelAssert\"}");
+    }
+
+    @Test
+    void compareWholeJsonTreeByStringWithKeyOrderingRelaxed() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .where()
+                .keysInAnyOrder()
+            .isEqualTo("{\"versions\":[1.00, 1.01, 1.02], \"name\":\"ModelAssert\"}");
+    }
+
+    @Test
+    void compareJsonSubTree() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .at("/versions")
+            .isEqualTo("[1.00, 1.01, 1.02]");
+    }
+
+    @Test
+    void replacePathWithCondition() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .where().path("versions").isArrayContaining(1.01d)
+            .isEqualTo("{\"name\":\"ModelAssert\"}");
+    }
+
+    @Test
+    void replacePathWithIgnore() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .where().path("versions").isIgnored()
+            .isEqualTo("{\"name\":\"ModelAssert\"}");
+    }
+
+    @Test
+    void matchesAnyGuid() {
+        assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
+            "\"b\":{\"guid\":\"96734f31-33c3-4e50-a72b-49bf2d990e33\"}," +
+            "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0-bf36-1994104aa870\"}}")
+            .where().path(ANY_SUBTREE, "guid").matches(GUID_PATTERN)
+            .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
+                "\"b\":{\"guid\":\"?\"}," +
+                "\"c\":{\"guid\":\"?\"}}");
+    }
+
+    @Test
+    void isNotMatchesForNonGuid() {
+        assertJson("{\"a\":{\"guid\":\"fa82142d-13d2\"}," +
+            "\"b\":{\"guid\":\"96734f31-33c3-4e50\"}," +
+            "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0\"}}")
+            .where().path(ANY_SUBTREE, "guid").matches(GUID_PATTERN)
+            .isNotEqualTo("{\"a\":{\"guid\":\"?\"}," +
+                "\"b\":{\"guid\":\"?\"}," +
+                "\"c\":{\"guid\":\"?\"}}");
     }
 
     private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {

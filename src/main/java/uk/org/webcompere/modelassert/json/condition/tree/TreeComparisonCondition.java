@@ -11,6 +11,7 @@ import uk.org.webcompere.modelassert.json.impl.JsonProviders;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Compare with a whole JSON structure
@@ -18,6 +19,7 @@ import java.util.*;
 public class TreeComparisonCondition implements Condition {
 
     private JsonNode expected;
+    private List<PathRule> rules = new LinkedList<>();
 
     /**
      * Constructor is private, use factory methods
@@ -75,6 +77,16 @@ public class TreeComparisonCondition implements Condition {
     }
 
     /**
+     * Add rules to the comparison
+     * @param rules the rules
+     * @return <code>this</code> for fluent calling
+     */
+    public TreeComparisonCondition withRules(List<PathRule> rules) {
+        this.rules.addAll(rules);
+        return this;
+    }
+
+    /**
      * Execute the test of the condition
      *
      * @param json the json to test
@@ -95,6 +107,16 @@ public class TreeComparisonCondition implements Condition {
     }
 
     private void compareTrees(JsonNode actual, JsonNode expected, Location pathToHere, List<String> failures) {
+        Optional<PathRule> alternativeCondition = findRule(pathToHere, TreeRule.CONDITION);
+        if (alternativeCondition.isPresent()) {
+            Result result = alternativeCondition.get().getRuleCondition().test(actual);
+            if (!result.isPassed()) {
+                failures.add(pathToHere.toString() + ": expected " + result.getCondition() +
+                    " but was " + result.getWas());
+            }
+            return;
+        }
+
         // early exit if types don't match
         if (actual.getNodeType() != expected.getNodeType()) {
             failures.add(pathToHere.toString() + " different types: expected " + expected.getNodeType() +
@@ -134,24 +156,46 @@ public class TreeComparisonCondition implements Condition {
         Set<String> extraKeys = new HashSet<>(actualKeys);
         extraKeys.removeAll(expectedKeys);
 
-        if (!missingKeys.isEmpty()) {
-            failures.add(pathToHere.toString() + ": missing keys " + missingKeys);
-        }
-        if (!extraKeys.isEmpty()) {
-            failures.add(pathToHere.toString() + ": unexpected keys " + extraKeys);
-        }
+        reportKeys("unexpected", actual, pathToHere, failures, extraKeys);
+        reportKeys("missing", actual, pathToHere, failures, missingKeys);
 
         Set<String> actualKeysWithoutExtras = new LinkedHashSet<>(actualKeys);
         actualKeysWithoutExtras.removeAll(extraKeys);
         Set<String> expectedKeysFoundInActual = new LinkedHashSet<>(expectedKeys);
         expectedKeysFoundInActual.retainAll(actualKeys);
 
-        checkKeyOrder(pathToHere, failures, actualKeysWithoutExtras, expectedKeysFoundInActual);
+        // conditionally check the order of the keys
+        if (!findRule(pathToHere, TreeRule.IGNORE_KEY_ORDER).isPresent()) {
+            checkKeyOrder(pathToHere, failures, actualKeysWithoutExtras, expectedKeysFoundInActual);
+        }
 
         // now iterate over the comparable keys
         for (String key: actualKeysWithoutExtras) {
             compareTrees(actual.get(key), expected.get(key), pathToHere.child(key), failures);
         }
+    }
+
+    private void reportKeys(String name, ObjectNode actual, Location pathToHere,
+                            List<String> failures, Set<String> keys) {
+        List<String> filtered = keys.stream()
+            .filter(key -> !isKeyAllowedByRules(actual, pathToHere, key))
+            .collect(Collectors.toList());
+
+        if (!filtered.isEmpty()) {
+            failures.add(pathToHere.toString() + ": " + name + " keys " + filtered);
+        }
+    }
+
+    private boolean isKeyAllowedByRules(ObjectNode actual, Location pathToHere, String key) {
+        return findRule(pathToHere.child(key), TreeRule.CONDITION)
+            .map(rule -> rule.getRuleCondition().test(actual.get(key)).isPassed())
+            .orElse(false);
+    }
+
+    private Optional<PathRule> findRule(Location pathToHere, TreeRule ruleToFind) {
+        return rules.stream()
+            .filter(rule -> rule.matches(pathToHere) && rule.getRule().equals(ruleToFind))
+            .findFirst();
     }
 
     private void checkKeyOrder(Location pathToHere, List<String> failures,
@@ -181,7 +225,14 @@ public class TreeComparisonCondition implements Condition {
      */
     @Override
     public String describe() {
-        return "equal to " + expected.toPrettyString();
+        return "equal to " + expected.toPrettyString() + explainRules();
+    }
+
+    private String explainRules() {
+        if (rules.isEmpty()) {
+            return "";
+        }
+        return "\nWith rules:" + rules.stream().map(PathRule::toString).collect(Collectors.joining("\n"));
     }
 
     private static Set<String> toSet(Iterator<String> iterable) {

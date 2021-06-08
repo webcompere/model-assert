@@ -51,8 +51,21 @@ MatcherAssert.assertThat("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.
     json().isEqualTo("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}"));
 ```
 
-These comparisons can be mixed with path matchers, but they compare the whole
+These comparisons can be mixed with path asserts, but they compare the whole
 object structure and report the differences on error, so there's minimum benefit in using both.
+
+By default, the comparison must match everything in order, but the `isEqualTo`
+can be relaxed by using `where`:
+
+```java
+// allow object keys in any order
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .where()
+        .keysInAnyOrder()
+    .isEqualTo("{\"versions\":[1.00, 1.01, 1.02], \"name\":\"ModelAssert\"}");
+```
+
+See [where context](#where-context) for more examples.
 
 ### Assertion DSL
 
@@ -80,7 +93,7 @@ assertJson(json)
 
 The entry point to creating an assertion is:
 
-- `assertJson` - overloaded to take JSON as `String`, `File` or `Path` - **produces a fluent assertion like AssertJ**
+- `assertJson` - overloaded to take JSON as `String`, `JsonNode`, `File` or `Path` - **produces a fluent assertion like AssertJ**
 - `json` - start creating a hamcrest matcher for a `String`
 - `jsonNode` - start creating a hamcrest matcher for a `JsonNode`
 - `jsonFile` - start creating a hamcrest matcher for a `File`
@@ -103,11 +116,12 @@ or similar.
 
 There are multiple contexts from which assertions are available:
 
-- Assertion - this allows `at` as well as ALL other assertions
-- Inside `at` - allows any `node` assertion, and then returns to `assertion` context
-- Node - this allows any assertion on the current node, which may be of any valid json type as well as `missing`
-- Type specific - by calling `number`, `text`, `object`, `array`, or `booleanNode` on a node context DSL, the DSL
+- **Assertion** - this allows `at` as well as ALL other assertions
+- **Inside `at`** - allows any `node` assertion, and then returns to `assertion` context
+- **Node** - this allows any assertion on the current node, which may be of any valid json type as well as `missing`
+- **Type specific** - by calling `number`, `text`, `object`, `array`, or `booleanNode` on a node context DSL, the DSL
 can be narrowed down to assertions for just that type - this can also be more expressive
+- **Where** - called before `isEqualTo` to create rules for whole tree comparison
 
 ```java
 assertJson(json)
@@ -371,6 +385,79 @@ composed together using `Condition.and`.
 
 > A Hamcrest matcher could also be used with `ConditionList`
 > via `matches(Matcher<JsonNode>)`
+
+## Whole Tree Comparison
+
+The tree comparison is intended to perform a semantic comparison of a JSON
+tree with another.
+
+It can be used in conjunction with the `at` part of the Node DSL:
+
+```java
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .at("/versions")
+    .isEqualTo("[1.00, 1.01, 1.02]");
+```
+
+It can also be customised using `where`.
+
+### Where Context
+
+This is used to customise how whole tree comparison works.
+
+The `where` function moves us from node context to customisation of `isEqualTo`:
+
+```java
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .where()
+        .keysInAnyOrder()
+    .isEqualTo("{\"versions\":[1.00, 1.01, 1.02], \"name\":\"ModelAssert\"}");
+```
+
+In the where context, we can add general leniency overrides, or specify overrides
+for particular paths.
+
+- `keysInAnyOrder` - allows all objects at all paths to skip the key order check
+- `path` - start customising the rule for a particular path in the tree:
+  ```java
+  // turn off key order sensitivity for the `address` field
+  assertJson(...)
+     .where().path("address").keysInAnyOrder()
+     .isEqualTo(...);
+  ```
+  The path is expressed as a series of values, which can be:
+  - `String` - conforming to a JSON Pointer, but no `/`
+  - Regular expression for matching a field - i.e. `Pattern`
+  - `PathWildCard` - either `ANY_FIELD` or `ANY_SUBTREE` - allowing path matching of one or n levels of fields
+
+Within the path expression, we then add further conditions:
+
+- Any conditions from Node context
+- `keysInAnyOrder` - specific matches for the current path
+- `isIgnored` - the path is just ignored
+
+The purpose of the `where` and `path` contexts is to allow for things
+which cannot be predicted at the time of coding, or which do not matter
+to the result.
+
+A good example is GUIDs in the output. Let's say we have a process which
+produces JSON with random GUIDs in it. We want to assert that there ARE GUIDs
+but we can't predict them:
+
+```java
+assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
+    "\"b\":{\"guid\":\"96734f31-33c3-4e50-a72b-49bf2d990e33\"}," +
+    "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0-bf36-1994104aa870\"}}")
+    .where()
+        .path(ANY_SUBTREE, "guid").matches(GUID_PATTERN)
+    .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
+        "\"b\":{\"guid\":\"?\"}," +
+        "\"c\":{\"guid\":\"?\"}}");
+```
+
+Here, the `path(ANY_SUBTREE, "guid").matches(GUID_PATTERN)` phrase is
+allowing anything _ending_ in `guid` to be matched using `matches(GUID_PATTERN)`
+instead of matching it against the JSON inside `isEqualTo`.
 
 ## Customisation
 
