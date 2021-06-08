@@ -68,8 +68,4 @@ public class Location {
     public String first() {
         return !path.isEmpty() ? path.get(0) : null;
     }
-
-    public int size() {
-        return path.size();
-    }
 }

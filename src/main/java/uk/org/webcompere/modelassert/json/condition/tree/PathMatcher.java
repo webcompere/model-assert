@@ -44,14 +44,13 @@ public interface PathMatcher {
      * @return true if matches the remainder
      */
     static boolean matchesTheRest(Location location, List<PathMatcher> remaining) {
-        if (remaining.isEmpty()) {
+        if (remaining.isEmpty() && location.isEmpty()) {
             return true;
         }
-        Location restOfLocationPath = location.peelOffFirst();
-        if (location.isEmpty()) {
+        if (!location.isEmpty() && remaining.isEmpty()) {
             return false;
         }
         return remaining.get(0)
-            .matches(restOfLocationPath, remaining.subList(1, remaining.size()));
+            .matches(location, remaining.subList(1, remaining.size()));
     }
 }

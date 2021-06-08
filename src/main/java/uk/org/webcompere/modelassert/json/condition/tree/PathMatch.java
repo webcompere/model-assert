@@ -13,6 +13,8 @@ import static java.util.stream.Collectors.toList;
  * Describes how a path may be matched
  */
 public class PathMatch {
+    private static final String JSON_POINTER_DELIMITER = "/";
+
     private List<PathMatcher> matchers;
 
     /**
@@ -26,12 +28,37 @@ public class PathMatch {
             .collect(toList());
     }
 
+    private PathMatch(String[] fixedPath) {
+        this.matchers = Arrays.stream(fixedPath)
+            .map(PathMatcher::of)
+            .collect(toList());
+    }
+
     /**
      * A path match that matches everywhere
      * @return matches everything
      */
     public static PathMatch all() {
         return new PathMatch(PathWildCard.ANY_SUBTREE);
+    }
+
+    /**
+     * Convert from JSON Pointer to path match
+     * @param jsonPointer the JSON pointer express
+     * @return a new {@link PathMatch}
+     */
+    public static PathMatch ofJsonPointer(String jsonPointer) {
+        if (!jsonPointer.startsWith(JSON_POINTER_DELIMITER)) {
+            throw new IllegalArgumentException("Invalid JSON Pointer, must start with " + JSON_POINTER_DELIMITER);
+        }
+
+        String[] parts = jsonPointer.split(JSON_POINTER_DELIMITER);
+        String[] nonBlankParts = Arrays.copyOfRange(parts, 1, parts.length);
+        if (Arrays.stream(nonBlankParts).anyMatch(part -> !part.trim().equals(part) || part.isEmpty())) {
+            throw new IllegalArgumentException("Invalid spacing or blanks in " + jsonPointer);
+        }
+
+        return new PathMatch(nonBlankParts);
     }
 
     /**

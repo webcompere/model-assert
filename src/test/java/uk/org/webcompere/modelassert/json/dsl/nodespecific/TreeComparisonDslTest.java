@@ -100,6 +100,15 @@ class TreeComparisonDslTest {
     }
 
     @Test
+    void keysCanBeInLooseOrderInSubTreeByAt() {
+        assertAllWays("{\"a\":1, \"b\":2, \"c\":{\"d\":3, \"e\":4}}",
+            "{\"b\":2, \"a\":1, \"c\":{\"d\":3, \"e\":4}}",
+            assertion -> assertion.where()
+                .at("/c").keysInAnyOrder()
+                .isEqualTo("{\"a\":1, \"b\":2, \"c\":{\"e\":4, \"d\":3}}"));
+    }
+
+    @Test
     void keysCanBeInLooseOrderInSubTreeByRegex() {
         assertAllWays("{\"a\":1, \"b\":2, \"c\":{\"d\":3, \"e\":4}}",
             "{\"b\":2, \"a\":1, \"c\":{\"d\":3, \"e\":4}}",

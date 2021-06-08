@@ -55,6 +55,15 @@ public class WhereDsl<A> implements IsEqualToDsl<A> {
         return new PathDsl<>(this, pathStart, pathRemainder);
     }
 
+    /**
+     * Provide a path using the JSON Pointer syntax - i.e. no wildcards or regular expressions used
+     * @param jsonPointer the json pointer expression
+     * @return the {@link PathDsl} to complete specialising what to do at that path instead of the defaults
+     */
+    public PathDsl<A> at(String jsonPointer) {
+        return PathDsl.fromJsonPointer(this, jsonPointer);
+    }
+
     @Override
     public A isEqualTo(TreeComparisonCondition condition) {
         return coreAssertion.satisfies(condition.withRules(rules));

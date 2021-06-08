@@ -7,10 +7,13 @@ import org.opentest4j.AssertionFailedError;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
-import static uk.org.webcompere.modelassert.json.JsonAssertions.json;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.*;
 import static uk.org.webcompere.modelassert.json.Patterns.GUID_PATTERN;
 import static uk.org.webcompere.modelassert.json.condition.ConditionList.conditions;
 import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
@@ -246,6 +249,20 @@ class ExamplesTest {
     }
 
     @Test
+    void matchesGuidsUsingAt() {
+        assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
+            "\"b\":{\"guid\":\"96734f31-33c3-4e50-a72b-49bf2d990e33\"}," +
+            "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0-bf36-1994104aa870\"}}")
+            .where()
+                .at("/a/guid").matches(GUID_PATTERN)
+                .at("/b/guid").matches(GUID_PATTERN)
+                .at("/c/guid").matches(GUID_PATTERN)
+            .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
+                "\"b\":{\"guid\":\"?\"}," +
+                "\"c\":{\"guid\":\"?\"}}");
+    }
+
+    @Test
     void isNotMatchesForNonGuid() {
         assertJson("{\"a\":{\"guid\":\"fa82142d-13d2\"}," +
             "\"b\":{\"guid\":\"96734f31-33c3-4e50\"}," +
@@ -254,6 +271,109 @@ class ExamplesTest {
             .isNotEqualTo("{\"a\":{\"guid\":\"?\"}," +
                 "\"b\":{\"guid\":\"?\"}," +
                 "\"c\":{\"guid\":\"?\"}}");
+    }
+
+    @Test
+    void canCompareObjects() {
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("a", UUID.randomUUID().toString());
+        objectMap.put("b", UUID.randomUUID().toString());
+        assertJson(objectMap)
+            .where()
+               .path(Pattern.compile("[ab]")).matches(GUID_PATTERN)
+            .isEqualTo("{\"a\":\"\",\"b\":\"\"}");
+    }
+
+    @Test
+    void canCompareObjectsWithHamcrest() {
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("a", UUID.randomUUID().toString());
+        objectMap.put("b", UUID.randomUUID().toString());
+        MatcherAssert.assertThat(objectMap, jsonObject()
+            .where()
+            .path(Pattern.compile("[ab]")).matches(GUID_PATTERN)
+            .isEqualTo("{\"a\":\"\",\"b\":\"\"}"));
+    }
+
+    @Test
+    void canCompareObjectToObject() {
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("a", UUID.randomUUID().toString());
+        objectMap.put("b", UUID.randomUUID().toString());
+
+        Map<String, Object> expectedMap = new HashMap<>();
+        expectedMap.put("a", "");
+        expectedMap.put("b", "");
+
+        assertJson(objectMap)
+            .where()
+            .path(Pattern.compile("[ab]")).matches(GUID_PATTERN)
+            .isEqualTo(expectedMap);
+    }
+
+    @Test
+    void canCompareTwoYamls() {
+        String yaml1 =
+                "name: Mr Yaml\n" +
+                "age: 42\n" +
+                "items:\n" +
+                "  - a\n" +
+                "  - b\n";
+
+        String yaml2 =
+            "name: Mr Yaml\n" +
+                "age: 42\n" +
+                "items:\n" +
+                "  - a\n" +
+                "  - b\n";
+
+        assertYaml(yaml1)
+            .isEqualToYaml(yaml2);
+    }
+
+    @Test
+    void canCompareTwoYamlWhenNotEqual() {
+        String yaml1 =
+            "name: Mr Yaml\n" +
+                "age: 42\n" +
+                "items:\n" +
+                "  - a\n" +
+                "  - b\n";
+
+        String yaml2 =
+            "name: Mrs Yaml\n" +
+                "age: 43\n" +
+                "items:\n" +
+                "  - c\n" +
+                "  - d\n";
+
+        assertYaml(yaml1)
+            .isNotEqualToYaml(yaml2);
+    }
+
+    @Test
+    void canCompareTwoYamlsHamcrestStyle() {
+        String yaml1 =
+            "name: Mr Yaml\n" +
+                "age: 42\n" +
+                "items:\n" +
+                "  - a\n" +
+                "  - b\n";
+
+        String yaml2 =
+            "name: Mr Yaml\n" +
+                "age: 42\n" +
+                "items:\n" +
+                "  - a\n" +
+                "  - b\n";
+
+        MatcherAssert.assertThat(yaml1, yaml().isEqualToYaml(yaml2));
+    }
+
+    @Test
+    void canCompareJsonWithYaml() {
+        assertJson("[1, 2, 3, 4]")
+            .isEqualToYaml("- 1\n- 2\n- 3\n- 4");
     }
 
     private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {

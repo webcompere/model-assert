@@ -51,11 +51,28 @@ public class JsonAssertions {
     }
 
     /**
+     * Begin an <code>assertJson</code> style assertion
+     * @param object an object to convert to JSON to start with
+     * @return an {@link AssertJson} object for adding assertions to
+     */
+    public static AssertJson<Object> assertJson(Object object) {
+        return new AssertJson<>(jsonObjectProvider(), object);
+    }
+
+    /**
      * Begin a hamcrest matcher based on a json String
      * @return the matcher
      */
     public static HamcrestJsonAssertionBuilder<String> json() {
         return new HamcrestJsonAssertionBuilder<>(jsonStringProvider());
+    }
+
+    /**
+     * Begin a hamcrest matcher based on an object
+     * @return the matcher
+     */
+    public static HamcrestJsonAssertionBuilder<Object> jsonObject() {
+        return new HamcrestJsonAssertionBuilder<>(jsonObjectProvider());
     }
 
     /**
@@ -82,4 +99,54 @@ public class JsonAssertions {
         return new HamcrestJsonAssertionBuilder<>(jsonPathProvider());
     }
 
+    /**
+     * Begin an <code>assertYaml</code> style assertion
+     * @param yaml the String yaml to assert
+     * @return an {@link AssertJson} object for adding assertions to
+     */
+    public static AssertJson<String> assertYaml(String yaml) {
+        return new AssertJson<>(yamlStringProvider(), yaml);
+    }
+
+    /**
+     * Begin an <code>assertYaml</code> style assertion
+     * @param file the file containing the yaml to assert
+     * @return an {@link AssertJson} object for adding assertions to
+     */
+    public static AssertJson<File> assertYaml(File file) {
+        return new AssertJson<>(yamlFileProvider(), file);
+    }
+
+    /**
+     * Begin an <code>assertYaml</code> style assertion
+     * @param path the path to the file containing the yaml to assert
+     * @return an {@link AssertJson} object for adding assertions to
+     */
+    public static AssertJson<Path> assertYaml(Path path) {
+        return new AssertJson<>(yamlPathProvider(), path);
+    }
+
+    /**
+     * Begin a hamcrest matcher based on a yaml String
+     * @return the matcher
+     */
+    public static HamcrestJsonAssertionBuilder<String> yaml() {
+        return new HamcrestJsonAssertionBuilder<>(yamlStringProvider());
+    }
+
+    /**
+     * Begin a hamcrest matcher based on a yaml file
+     * @return the matcher
+     */
+    public static HamcrestJsonAssertionBuilder<File> yamlFile() {
+        return new HamcrestJsonAssertionBuilder<>(yamlFileProvider());
+    }
+
+    /**
+     * Begin a hamcrest matcher based on a yaml file via {@link Path}
+     * @return the matcher
+     */
+    public static HamcrestJsonAssertionBuilder<Path> yamlFilePath() {
+        return new HamcrestJsonAssertionBuilder<>(yamlPathProvider());
+    }
 }

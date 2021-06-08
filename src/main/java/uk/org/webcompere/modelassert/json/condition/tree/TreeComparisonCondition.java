@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
-import uk.org.webcompere.modelassert.json.impl.JsonProviders;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,33 +44,6 @@ public class TreeComparisonCondition implements Condition {
      */
     public static TreeComparisonCondition isEqualTo(JsonNode tree) {
         return new TreeComparisonCondition(tree);
-    }
-
-    /**
-     * Construct equals condition from json as a string
-     * @param json the json as a string
-     * @return the condition
-     */
-    public static TreeComparisonCondition isEqualTo(String json) {
-        return isEqualTo(json, JsonProviders.jsonStringProvider());
-    }
-
-    /**
-     * Construct equals condition from json as a string
-     * @param json the json file
-     * @return the condition
-     */
-    public static TreeComparisonCondition isEqualTo(File json) {
-        return isEqualTo(json, JsonProviders.jsonFileProvider());
-    }
-
-    /**
-     * Construct equals condition from json as a string
-     * @param json the json file
-     * @return the condition
-     */
-    public static TreeComparisonCondition isEqualTo(Path json) {
-        return isEqualTo(json, JsonProviders.jsonPathProvider());
     }
 
     /**

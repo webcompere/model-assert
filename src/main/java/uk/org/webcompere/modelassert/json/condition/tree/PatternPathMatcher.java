@@ -20,7 +20,7 @@ public class PatternPathMatcher implements PathMatcher {
         if (first == null) {
             return false;
         }
-        return pattern.matcher(first).matches() && matchesTheRest(location, remaining);
+        return pattern.matcher(first).matches() && matchesTheRest(location.peelOffFirst(), remaining);
     }
 
     @Override
