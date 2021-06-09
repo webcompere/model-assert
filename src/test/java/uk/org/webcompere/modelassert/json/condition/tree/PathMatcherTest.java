@@ -1,16 +1,15 @@
 package uk.org.webcompere.modelassert.json.condition.tree;
 
 import org.junit.jupiter.api.Test;
-import uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard;
+import uk.org.webcompere.modelassert.json.PathWildCard;
 
 import java.util.Collections;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
+import static uk.org.webcompere.modelassert.json.PathWildCard.ANY_SUBTREE;
 
 class PathMatcherTest {
 
@@ -22,7 +21,7 @@ class PathMatcherTest {
 
     @Test
     void pathMatcherWithAnyFieldShouldMatchSingleLocation() {
-        assertThat(PathMatcher.of(PathWildCard.ANY_FIELD)
+        assertThat(PathMatcher.of(PathWildCard.ANY)
             .matches(new Location().child("something"), Collections.emptyList()))
             .isTrue();
     }

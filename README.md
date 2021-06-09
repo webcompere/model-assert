@@ -352,6 +352,12 @@ some extra checking that this is a text node
   ```
   More specific typed versions - `isGreaterThanInt` or `isLessThanLong` also exist to avoid a test
   passing through accidental type coercion or overflow.
+- `isBetween` - asserts that a number falls in a range
+  ```java
+  assertJson("{number:12}")
+    .at("/number").isBetween(2, 29);
+  ```
+- `isZero` - asserts that the number is zero
 
 ### Boolean Context Conditions
 - `isTrue`/`isFalse` - requires the node to be boolean and have the correct value
@@ -446,6 +452,31 @@ composed together using `Condition.and`.
 > A Hamcrest matcher could also be used with `ConditionList`
 > via `matches(Matcher<JsonNode>)`
 
+## Size Assertions (various types)
+
+Object, String and Array can be said to be _sizeable_. For Object, the size is
+the number of keys. For String, it's the number of characters. For Array it's the number
+of elements.
+
+We can assert this with `hasSize`:
+
+```java
+assertJson("\"some string\"")
+    .hasSize(11);
+
+assertJson("[1, 2, 3]")
+    .hasSize(3);
+```
+
+The general purpose `Number` based numeric assertions can be used to assert size via the
+`size()` function, which enters the `NumberComparison` context:
+
+```java
+// assert that the array has a size between 3 and 9
+assertJson("[1, 2, 3]")
+    .size().isBetween(3, 9);
+```
+
 ## Whole Tree Comparison
 
 The tree comparison is intended to perform a semantic comparison of a JSON
@@ -488,7 +519,7 @@ for particular paths.
   The path is expressed as a series of values, which can be:
   - `String` - conforming to a JSON Pointer, but no `/`
   - Regular expression for matching a field - i.e. `Pattern`
-  - `PathWildCard` - either `ANY_FIELD` or `ANY_SUBTREE` - allowing path matching of one or n levels of fields
+  - `PathWildCard` - either `ANY` or `ANY_SUBTREE` - allowing path matching of one or n levels of fields
 - `at` - a synonym for `path` where the whole JSON Pointer style path is provided - this is a short-hand for paths where there are no wildcards
 
 Within the path expression, we then add further conditions:
@@ -620,3 +651,21 @@ content().string(
 While this syntax is of limited value in this simple case, the more powerful comparisons supported
 by this library are equally possible after the `json()` statement starts creating a matcher.
 
+## API Stability
+
+The classes in the root package `uk.org.webcompere.modelassert.json` are the jumping
+on point for the API and they will be changed rarely.
+
+Functions elsewhere will be accessed via the fluent API and may move between packages
+in later versions, though this should be resolved without changing consuming code.
+
+SemVer numbering will indicate possible breaking changes by increments to the minor version number. Patch
+versions are unlikely to have any noticeable effect on the API.
+
+## Contributing
+
+If you experience any problems using this idea, or have any ideas, then please
+[raise an issue](https://github.com/webcompere/model-assert/issues/new/choose). Please
+check for any [existing issues](https://github.com/webcompere/model-assert/issues) first.
+
+PRs will be accepted if they come with unit tests and are linked to an issue.

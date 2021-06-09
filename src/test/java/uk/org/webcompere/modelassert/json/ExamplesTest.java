@@ -18,7 +18,7 @@ import static uk.org.webcompere.modelassert.json.JsonAssertions.*;
 import static uk.org.webcompere.modelassert.json.Patterns.GUID_PATTERN;
 import static uk.org.webcompere.modelassert.json.condition.ConditionList.conditions;
 import static uk.org.webcompere.modelassert.json.condition.MatchesTextCondition.textMatches;
-import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
+import static uk.org.webcompere.modelassert.json.PathWildCard.ANY_SUBTREE;
 
 @DisplayName("Some usage examples")
 class ExamplesTest {
@@ -121,10 +121,40 @@ class ExamplesTest {
     }
 
     @Test
+    void assertTheLengthOfString() {
+        assertJson("\"some string\"")
+            .hasSize(11);
+    }
+
+    @Test
+    void lengthOfAnArray() {
+        assertJson("[1, 2, 3]")
+            .hasSize(3);
+    }
+
+    @Test
+    void lengthOfAnArrayBetweenValues() {
+        assertJson("[1, 2, 3]")
+            .size().isBetween(3, 9);
+    }
+
+    @Test
     void canApplyStandardSetOfAssertions() {
         assertJson("{\"root\":{\"name\":\"Mr Name\"}}")
                 .is(ExamplesTest::theUsual)
                 .isNotEmpty(); // additional clause
+    }
+
+    @Test
+    void canUseGreaterThanWithInteger() {
+        assertJson("{number:12}")
+            .at("/number").isGreaterThan(10);
+    }
+
+    @Test
+    void canUseBetweenWithInteger() {
+        assertJson("{number:12}")
+            .at("/number").isBetween(2, 29);
     }
 
     @Test

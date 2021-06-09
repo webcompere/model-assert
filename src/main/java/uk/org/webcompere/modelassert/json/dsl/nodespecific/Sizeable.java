@@ -21,4 +21,13 @@ public interface Sizeable<A> extends Satisfies<A> {
     default A hasSize(int expected) {
         return satisfies(new HasSize(expected));
     }
+
+    /**
+     * Requiring this node to be a sizeable node, this switches to {@link NumberComparisonDsl}
+     * to allow criteria to be specified for the size.
+     * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+     */
+    default NumberComparisonDsl<A> size() {
+        return HasSize.sizeOf(this);
+    }
 }

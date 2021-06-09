@@ -1,4 +1,4 @@
-package uk.org.webcompere.modelassert.json;
+package uk.org.webcompere.modelassert.json.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opentest4j.AssertionFailedError;

@@ -29,4 +29,10 @@ class HasSizeTest {
         assertAllWays("{}", "false",
                 assertion -> assertion.hasSize(0));
     }
+
+    @Test
+    void arraySizeInBoundary() {
+        assertAllWays("[1, 2, 3, 4]", "[]",
+            assertion -> assertion.size().isBetween(2, 7));
+    }
 }

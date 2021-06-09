@@ -5,7 +5,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 import uk.org.webcompere.modelassert.json.Condition;
-import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.condition.JsonIsNotNull;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;

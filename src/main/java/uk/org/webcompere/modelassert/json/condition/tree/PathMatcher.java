@@ -1,6 +1,6 @@
 package uk.org.webcompere.modelassert.json.condition.tree;
 
-import uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard;
+import uk.org.webcompere.modelassert.json.PathWildCard;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -30,7 +30,7 @@ public interface PathMatcher {
         }
 
         if (value instanceof Pattern) {
-            return new PatternPathMatcher((Pattern) value);
+            return new RegexPathMatcher((Pattern) value);
         }
 
         throw new IllegalArgumentException("Unexpected path part: " + value +

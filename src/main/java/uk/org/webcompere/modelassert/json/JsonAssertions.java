@@ -2,7 +2,7 @@ package uk.org.webcompere.modelassert.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.assertjson.AssertJson;
-import uk.org.webcompere.modelassert.json.dsl.HamcrestJsonAssertionBuilder;
+import uk.org.webcompere.modelassert.json.hamcrest.HamcrestJsonAssertionBuilder;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -12,7 +12,7 @@ import static uk.org.webcompere.modelassert.json.impl.JsonProviders.*;
 /**
  * Jumping on point - create either an assertJson or a hamcrest. Facade/factory methods.
  */
-public class JsonAssertions {
+public final class JsonAssertions {
 
     /**
      * Begin an <code>assertJson</code> style assertion

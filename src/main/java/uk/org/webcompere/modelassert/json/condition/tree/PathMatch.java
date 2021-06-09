@@ -1,6 +1,6 @@
 package uk.org.webcompere.modelassert.json.condition.tree;
 
-import uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard;
+import uk.org.webcompere.modelassert.json.PathWildCard;
 
 import java.util.Arrays;
 import java.util.List;

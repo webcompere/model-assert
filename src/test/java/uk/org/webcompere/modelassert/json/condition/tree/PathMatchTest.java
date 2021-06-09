@@ -3,8 +3,8 @@ package uk.org.webcompere.modelassert.json.condition.tree;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_FIELD;
-import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
+import static uk.org.webcompere.modelassert.json.PathWildCard.ANY;
+import static uk.org.webcompere.modelassert.json.PathWildCard.ANY_SUBTREE;
 
 class PathMatchTest {
 
@@ -37,15 +37,15 @@ class PathMatchTest {
 
     @Test
     void fieldWildCardCanApplyToAnywhereInPath() {
-        assertThat(new PathMatch(ANY_FIELD, "b", "c")
+        assertThat(new PathMatch(ANY, "b", "c")
             .matches(new Location().child("a").child("b").child("c")))
             .isTrue();
 
-        assertThat(new PathMatch("a", ANY_FIELD, "c")
+        assertThat(new PathMatch("a", ANY, "c")
             .matches(new Location().child("a").child("b").child("c")))
             .isTrue();
 
-        assertThat(new PathMatch("a", "b", ANY_FIELD)
+        assertThat(new PathMatch("a", "b", ANY)
             .matches(new Location().child("a").child("b").child("c")))
             .isTrue();
     }
