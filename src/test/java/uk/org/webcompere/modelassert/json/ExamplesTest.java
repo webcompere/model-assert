@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 import uk.org.webcompere.modelassert.json.condition.HasSize;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
+import uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.WhereDsl;
 
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
@@ -278,6 +279,22 @@ class ExamplesTest {
             .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
                 "\"b\":{\"guid\":\"?\"}," +
                 "\"c\":{\"guid\":\"?\"}}");
+    }
+
+    @Test
+    void matchesAnyGuidUsingCommonConfiguration() {
+        assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
+            "\"b\":{\"guid\":\"96734f31-33c3-4e50-a72b-49bf2d990e33\"}," +
+            "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0-bf36-1994104aa870\"}}")
+            .where()
+                .configuredBy(ExamplesTest::ignoreGuids)
+            .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
+                "\"b\":{\"guid\":\"?\"}," +
+                "\"c\":{\"guid\":\"?\"}}");
+    }
+
+    private static <A> WhereDsl<A> ignoreGuids(WhereDsl<A> where) {
+        return where.path(ANY_SUBTREE, "guid").matches(GUID_PATTERN);
     }
 
     @Test

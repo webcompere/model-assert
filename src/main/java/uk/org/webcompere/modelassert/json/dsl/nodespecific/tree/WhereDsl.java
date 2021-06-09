@@ -8,6 +8,7 @@ import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 import static uk.org.webcompere.modelassert.json.condition.Not.not;
@@ -34,6 +35,15 @@ public class WhereDsl<A> implements IsEqualToDsl<A> {
      */
     public WhereDsl<A> keysInAnyOrder() {
         return pathRule(new PathRule(TreeRule.IGNORE_KEY_ORDER));
+    }
+
+    /**
+     * Add common configuration to the where dsl
+     * @param configurer the configurer to use
+     * @return the {@link WhereDsl} for further customisation
+     */
+    public WhereDsl<A> configuredBy(UnaryOperator<WhereDsl<A>> configurer) {
+        return configurer.apply(this);
     }
 
     /**
@@ -74,4 +84,5 @@ public class WhereDsl<A> implements IsEqualToDsl<A> {
     public A isNotEqualTo(TreeComparisonCondition condition) {
         return coreAssertion.satisfies(not(condition.withRules(rules)));
     }
+
 }

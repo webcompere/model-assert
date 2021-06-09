@@ -3,6 +3,7 @@ package uk.org.webcompere.modelassert.json.dsl;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.condition.ConditionList;
 
+@FunctionalInterface
 public interface Satisfies<A> {
     /**
      * Add a condition that the input JSON must satisfy
