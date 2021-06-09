@@ -5,12 +5,15 @@ import java.util.regex.Pattern;
 
 import static uk.org.webcompere.modelassert.json.condition.tree.PathMatcher.matchesTheRest;
 
-public class PatternPathMatcher implements PathMatcher {
+/**
+ * Matches a Json pointer sub path on the tree using a regular expression
+ */
+public class RegexPathMatcher implements PathMatcher {
     public static final Pattern ANY_FIELD_PATTERN = Pattern.compile(".*");
 
     private Pattern pattern;
 
-    public PatternPathMatcher(Pattern pattern) {
+    public RegexPathMatcher(Pattern pattern) {
         this.pattern = pattern;
     }
 

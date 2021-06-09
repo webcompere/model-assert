@@ -128,8 +128,26 @@ class JsonAssertionsTest {
     }
 
     @Test
+    void compareYamlFileWithJson() {
+        assertYaml(SIMPLE_YAML.toFile())
+            .isEqualTo(SIMPLE_JSON);
+    }
+
+    @Test
+    void hamcrestCompareYamlWithJson() {
+        assertThat(SIMPLE_YAML, yamlFilePath()
+            .isEqualTo(SIMPLE_JSON));
+    }
+
+    @Test
+    void hamcrestCompareYamlFileWithJson() {
+        assertThat(SIMPLE_YAML.toFile(), yamlFile()
+            .isEqualTo(SIMPLE_JSON));
+    }
+
+    @Test
     void compareJsonWithYaml() {
         assertJson(SIMPLE_JSON)
-            .isEqualToYaml(SIMPLE_JSON);
+            .isEqualToYaml(SIMPLE_YAML);
     }
 }

@@ -1,10 +1,10 @@
 package uk.org.webcompere.modelassert.json.condition.tree;
 
-import uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard;
+import uk.org.webcompere.modelassert.json.PathWildCard;
 
 import java.util.List;
 
-import static uk.org.webcompere.modelassert.json.condition.tree.PatternPathMatcher.ANY_FIELD_PATTERN;
+import static uk.org.webcompere.modelassert.json.condition.tree.RegexPathMatcher.ANY_FIELD_PATTERN;
 
 public class WildCardPathMatcher implements PathMatcher {
     private PathWildCard pathWildCard;
@@ -16,8 +16,8 @@ public class WildCardPathMatcher implements PathMatcher {
     @Override
     public boolean matches(Location location, List<PathMatcher> remaining) {
         switch (pathWildCard) {
-          case ANY_FIELD:
-              return new PatternPathMatcher(ANY_FIELD_PATTERN).matches(location, remaining);
+          case ANY:
+              return new RegexPathMatcher(ANY_FIELD_PATTERN).matches(location, remaining);
           case ANY_SUBTREE:
               Location currentLocation = location;
               if (remaining.isEmpty()) {

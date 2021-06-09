@@ -1,7 +1,8 @@
 package uk.org.webcompere.modelassert.json;
 
 /**
- * The result of comparison. A mutable object passed through conditions.
+ * The result of comparison. A mutable object passed through conditions to reach a pass/fail
+ * with some explanation of why
  */
 public class Result {
     private String condition;

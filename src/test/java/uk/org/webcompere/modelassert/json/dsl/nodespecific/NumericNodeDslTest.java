@@ -107,4 +107,64 @@ class NumericNodeDslTest {
         assertAllWays("41.99999", "42",
                 assertion -> assertion.isLessThanDouble(42));
     }
+
+    @Test
+    void doubleIsZero() {
+        assertAllWays("0.0", "0.1",
+            NumberComparisonDsl::isZero);
+    }
+
+    @Test
+    void zeroIsZero() {
+        assertAllWays("0", "123",
+            NumberComparisonDsl::isZero);
+    }
+
+    @Test
+    void isGreaterThanOrEqualToWhenEqual() {
+        assertAllWays("12", "10",
+            assertion -> assertion.isGreaterThanOrEqualTo(11));
+    }
+
+    @Test
+    void isGreaterThanOrEqualToWhenGreater() {
+        assertAllWays("13", "10",
+            assertion -> assertion.isGreaterThanOrEqualTo(11));
+    }
+
+    @Test
+    void isLessThanOrEqualToWhenEqual() {
+        assertAllWays("12", "13",
+            assertion -> assertion.isLessThanOrEqualTo(12));
+    }
+
+    @Test
+    void isLessThanOrEqualToWhenLess() {
+        assertAllWays("10", "12",
+            assertion -> assertion.isLessThanOrEqualTo(11));
+    }
+
+    @Test
+    void isBetweenWhenBetween() {
+        assertAllWays("5", "0",
+            assertion -> assertion.isBetween(2, 7));
+    }
+
+    @Test
+    void isBetweenWhenLowerLimit() {
+        assertAllWays("2", "0",
+            assertion -> assertion.isBetween(2, 7));
+    }
+
+    @Test
+    void isBetweenWhenUpperLimit() {
+        assertAllWays("7", "0",
+            assertion -> assertion.isBetween(2, 7));
+    }
+
+    @Test
+    void isBetweenWhenUpperLimitAndIncorrectIsAfterUpper() {
+        assertAllWays("7", "8",
+            assertion -> assertion.isBetween(2, 7));
+    }
 }

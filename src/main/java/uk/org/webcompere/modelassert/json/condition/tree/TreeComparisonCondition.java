@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.org.webcompere.modelassert.json.Condition;
-import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
+import uk.org.webcompere.modelassert.json.impl.JsonProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;

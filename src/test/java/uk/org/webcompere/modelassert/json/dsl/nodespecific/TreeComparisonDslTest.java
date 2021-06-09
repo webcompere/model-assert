@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.regex.Pattern;
 
 import static uk.org.webcompere.modelassert.json.TestAssertions.assertAllWays;
-import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_FIELD;
-import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
+import static uk.org.webcompere.modelassert.json.PathWildCard.ANY;
+import static uk.org.webcompere.modelassert.json.PathWildCard.ANY_SUBTREE;
 
 class TreeComparisonDslTest {
 
@@ -122,7 +122,7 @@ class TreeComparisonDslTest {
         assertAllWays("{\"a\":1, \"b\":2, \"c\":{\"d\":3, \"e\":4}}",
             "{\"b\":2, \"a\":1, \"c\":{\"d\":3, \"e\":4}}",
             assertion -> assertion.where()
-                .path(ANY_FIELD).keysInAnyOrder()
+                .path(ANY).keysInAnyOrder()
                 .isEqualTo("{\"a\":1, \"b\":2, \"c\":{\"e\":4, \"d\":3}}"));
     }
 

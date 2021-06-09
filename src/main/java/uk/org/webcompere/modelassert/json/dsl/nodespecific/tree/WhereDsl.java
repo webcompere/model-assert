@@ -1,5 +1,6 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific.tree;
 
+import uk.org.webcompere.modelassert.json.PathWildCard;
 import uk.org.webcompere.modelassert.json.condition.tree.PathRule;
 import uk.org.webcompere.modelassert.json.condition.tree.TreeComparisonCondition;
 import uk.org.webcompere.modelassert.json.condition.tree.TreeRule;
