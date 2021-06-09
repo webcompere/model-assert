@@ -1,5 +1,6 @@
 package uk.org.webcompere.modelassert.json.impl;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -12,7 +13,9 @@ import java.nio.file.Path;
  * Collection of built in convertions to {@link JsonNode}
  */
 public class JsonProviders {
-    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+        .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+
     private static ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
 
     /**

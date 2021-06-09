@@ -5,13 +5,13 @@ import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 
 /**
- * Ands two conditions together from left to right, with short-circuiting
+ * Ors two conditions together from left to right, with short-circuiting
  */
-public class AndCondition implements Condition {
+public class OrCondition implements Condition {
     private Condition first;
     private Condition second;
 
-    public AndCondition(Condition first, Condition second) {
+    public OrCondition(Condition first, Condition second) {
         this.first = first;
         this.second = second;
     }
@@ -19,7 +19,7 @@ public class AndCondition implements Condition {
     @Override
     public Result test(JsonNode json) {
         Result firstResult = first.test(json);
-        if (!firstResult.isPassed()) {
+        if (firstResult.isPassed()) {
             return firstResult.withNewDescription(describe());
         }
         return second.test(json).withNewDescription(describe());
@@ -27,6 +27,6 @@ public class AndCondition implements Condition {
 
     @Override
     public String describe() {
-        return first.describe() + " and " + second.describe();
+        return first.describe() + " or " + second.describe();
     }
 }
