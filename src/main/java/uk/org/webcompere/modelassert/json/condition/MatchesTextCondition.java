@@ -53,6 +53,15 @@ public class MatchesTextCondition implements Condition {
     }
 
     /**
+     * Build a matcher condition
+     * @param pattern the pattern to match
+     * @return a new {@link MatchesTextCondition} condition
+     */
+    public static MatchesTextCondition textMatches(Pattern pattern) {
+        return new MatchesTextCondition(pattern);
+    }
+
+    /**
      * Execute the test of the condition
      *
      * @param json the json to test

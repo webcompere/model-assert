@@ -146,6 +146,14 @@ MatcherAssert.assertThat(yaml1, yaml().isEqualToYaml(yaml2));
 The entry point to creating an assertion is:
 
 - `assertJson` - overloaded to take JSON as `String`, `JsonNode`, `File` or `Path` - **produces a fluent assertion like AssertJ**
+  > Note: the Jackson parser has been configured to load unquoted field names
+  > so:
+  > ```java
+  > String unquoted = "{someField: \"value\"}";
+  > // is equivalent to
+  > String quoted = "{\"someField\": \"value\"}";
+  > ```
+  > Examples throughout the tests are in the second, more conventional, format.
 - `json` - start creating a hamcrest matcher for a `String`
 - `jsonNode` - start creating a hamcrest matcher for a `JsonNode`
 - `jsonFile` - start creating a hamcrest matcher for a `File`
@@ -155,7 +163,7 @@ After that, there are high level methods to add conditions to the matcher:
 
 - `at` - start creating a JSON Pointer based assertion
 - `isNull`/`isNotNull` - asserts whether the whole loaded JSON amounts to `null`
-- `satisfies` - plug in a custom `Condition`
+- `satisfies` - plug in a custom `Condition` or `ConditionList`
 
 When a condition has been added to the assertion then the fluent DSL
 allows for further conditions to be added.
@@ -532,8 +540,28 @@ assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
 There's room for custom assertions throughout the DSL, and if necessary,
 the `Satisfies` interface, allows a condition to be added fluently. Conditions
 are based on the `Condition` class. The existing conditions can be used directly
-if necessary, and can be composed using `Condition.and` where needed. Similarly, there's
-a `not` method in the `Condition` class `Not` to invert any condition.
+if necessary, and can be composed using `Condition.and` or `Condition.or`
+where needed. Similarly, there's a `not` method in the `Condition`
+class `Not` to invert any condition as well as `invert` on `Condition` to invert
+the current condition.
+
+A custom condition can be fed to `satisfies`:
+
+```java
+// using `and` along with functions from the
+// condition classes
+assertJson("\"some string\"").satisfies(
+    textMatches(Pattern.compile("[a-z ]+"))
+        .and(new HasSize(12)));
+
+// using or and inverting the condition - this will
+// pass as it fails both the ORed conditions, but the
+// whole statement is inverted
+assertJson("\"some string!!!\"").satisfies(
+    textMatches(Pattern.compile("[a-z ]+"))
+        .or(new HasSize(12))
+        .inverted());
+```
 
 ## Interoperability
 

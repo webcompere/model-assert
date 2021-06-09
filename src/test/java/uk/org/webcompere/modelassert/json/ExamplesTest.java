@@ -4,18 +4,20 @@ import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
+import uk.org.webcompere.modelassert.json.condition.HasSize;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.*;
 import static uk.org.webcompere.modelassert.json.Patterns.GUID_PATTERN;
 import static uk.org.webcompere.modelassert.json.condition.ConditionList.conditions;
+import static uk.org.webcompere.modelassert.json.condition.MatchesTextCondition.textMatches;
 import static uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.PathWildCard.ANY_SUBTREE;
 
 @DisplayName("Some usage examples")
@@ -271,6 +273,34 @@ class ExamplesTest {
             .isNotEqualTo("{\"a\":{\"guid\":\"?\"}," +
                 "\"b\":{\"guid\":\"?\"}," +
                 "\"c\":{\"guid\":\"?\"}}");
+    }
+
+    @Test
+    void usingAndLogic() {
+        assertJson("\"some string\"").satisfies(
+            textMatches(Pattern.compile("[a-z ]+"))
+                .and(new HasSize(11)));
+    }
+
+    @Test
+    void usingAndLogicWithNot() {
+        assertJson("\"some string\"").satisfies(
+            textMatches(Pattern.compile("[a-z ]+"))
+                .and(new HasSize(12))
+                .inverted());
+    }
+
+    @Test
+    void usingOrLogic() {
+        assertJson("\"some string\"").satisfies(
+            textMatches(Pattern.compile("[0-9]+"))
+                .or(new HasSize(11)));
+    }
+
+    @Test
+    void jacksonWithNonQuotedFieldNames() {
+        assertJson("{field:\"some string\"}")
+            .at("/field").isText("some string");
     }
 
     @Test
