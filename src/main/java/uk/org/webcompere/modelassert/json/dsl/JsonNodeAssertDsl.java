@@ -61,6 +61,14 @@ public interface JsonNodeAssertDsl<A>
     }
 
     /**
+     * A missing node is not anything, everything else is
+     * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+     */
+    default A isAnyNode() {
+        return isNotMissing();
+    }
+
+    /**
      * Add a custom assertion condition
      * @param description the description for the failure message
      * @param customCondition the condition
