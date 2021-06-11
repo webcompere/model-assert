@@ -317,6 +317,9 @@ some extra checking that this is a text node
 
   assertJson("{\"child\":{\"age\":123}}")
     .at("/child/age").isNotText();
+
+    assertJson("{\"child\":{\"name\":"Bob"}}")
+    .at("/child/age").isNotText("Bert");
   ```
 - `isEmptyText`/`isNotEmptyText` - both of these require the node to be text, and then assert that the text is `""` or not
   ```java
@@ -342,6 +345,7 @@ some extra checking that this is a text node
     .textMatches("Has dashes", text -> text.contains("-"));
   ```
 - `textContains`/`textDoesNotContain` - reuses the logic of the regular expression matcher to find substrings
+- `textStartsWith`/`textDoesNotStartWith` - reuses the logic of the regular expression matcher to check the prefix of a text node's text
 
 ### Numeric Context Conditions
 - `isGreaterThan`, `isGreaterThanOrEqualTo`, `isLessThan`, `isLessThanOrEqualTo` - these
