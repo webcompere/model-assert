@@ -38,6 +38,22 @@ public class WhereDsl<A> implements IsEqualToDsl<A> {
     }
 
     /**
+     * Relax the ordering requirement for an array, everywhere
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> arrayInAnyOrder() {
+        return pathRule(new PathRule(TreeRule.IGNORE_ARRAY_ORDER));
+    }
+
+    /**
+     * Allow arrays to just contain the other elements rather than match completely
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> arrayContains() {
+        return pathRule(new PathRule(TreeRule.ARRAY_CONTAINS));
+    }
+
+    /**
      * Add common configuration to the where dsl
      * @param configurer the configurer to use
      * @return the {@link WhereDsl} for further customisation

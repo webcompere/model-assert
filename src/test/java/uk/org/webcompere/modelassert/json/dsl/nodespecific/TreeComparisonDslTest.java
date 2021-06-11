@@ -134,4 +134,45 @@ class TreeComparisonDslTest {
                 .path(ANY_SUBTREE, "c").keysInAnyOrder()
                 .isEqualTo("{\"a\":1, \"b\":2, \"c\":{\"e\":4, \"d\":3}}"));
     }
+
+    @Test
+    void looseComparisonOfArrays() {
+        assertAllWays("[1, 2, 3, 4]", "[1, 2, 3]",
+            assertion -> assertion.where()
+                .arrayInAnyOrder()
+                .isEqualTo("[4, 3, 2, 1]"));
+    }
+
+    @Test
+    void looseComparisonOfArraysWithContains() {
+        assertAllWays("[1, 2, 3, 4]", "[1, 2]",
+            assertion -> assertion.where()
+                .arrayInAnyOrder()
+                .arrayContains()
+                .isEqualTo("[3, 2, 1]"));
+    }
+
+    @Test
+    void looseComparisonOfArraysWithContainsDoesntRequireOrder() {
+        assertAllWays("[1, 2, 3, 4]", "[1, 2]",
+            assertion -> assertion.where()
+                .arrayContains()
+                .isEqualTo("[3, 2, 1]"));
+    }
+
+    @Test
+    void looseComparisonOfArraysWithContainsDoesntRequireOrderInSubTree() {
+        assertAllWays("{a:[1, 2, 3, 4]}", "{a:[1, 2]}",
+            assertion -> assertion.where()
+                .arrayContains()
+                .isEqualTo("{a:[3, 2, 1]}"));
+    }
+
+    @Test
+    void looseComparisonOfArraysWithContainsDoesntRequireOrderInSubTreeWithPathRule() {
+        assertAllWays("{a:[1, 2, 3, 4]}", "{a:[1, 2]}",
+            assertion -> assertion.where()
+                .path("a").arrayContains()
+                .isEqualTo("{a:[3, 2, 1]}"));
+    }
 }

@@ -509,6 +509,8 @@ In the where context, we can add general leniency overrides, or specify override
 for particular paths.
 
 - `keysInAnyOrder` - allows all objects at all paths to skip the key order check
+- `arrayInAnyOrder` - array elements can be in any order
+- `arrayContains` - array elements can be in any order and the actual may have additional elements
 - `path` - start customising the rule for a particular path in the tree:
   ```java
   // turn off key order sensitivity for the `address` field
@@ -526,6 +528,8 @@ Within the path expression, we then add further conditions:
 
 - Any conditions from Node context
 - `keysInAnyOrder` - specific matches for the current path
+- `arrayInAnyOrder` - array elements can be in any order
+- `arrayContains` - array elements can be in any order and the actual may have additional elements
 - `isIgnored` - the path is just ignored
 
 The purpose of the `where` and `path` contexts is to allow for things
@@ -565,6 +569,54 @@ assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
         "\"b\":{\"guid\":\"?\"}," +
         "\"c\":{\"guid\":\"?\"}}");
 ```
+
+#### Loose Array Matching
+
+**Warning: performance implications** both `arrayInAnyOrder` and `arrayContains`
+try every possible combination of array element in the expected against the
+actual in order to work out if the expected elements are present. For
+small arrays, this is not a problem, and the unit tests of this project
+run very quickly, proving that.
+
+However, an array can, itself, contain objects or other arrays. This can lead
+to a large permutational explosion, which can take time.
+
+The easiest way to relax array ordering rules is to use `where().arrayInAnyOrder()`
+while setting up `isEqualTo`:
+
+```java
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .where()
+    .arrayInAnyOrder()
+    .isEqualTo("{\"name\":\"ModelAssert\", \"versions\":[1.02, 1.01, 1.00]}");
+```
+
+If only a specific array may be in a random order, it may be better to specialise
+this by path:
+
+```java
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .where()
+    .path("versions").arrayInAnyOrder()
+    .isEqualTo("{\"name\":\"ModelAssert\", \"versions\":[1.02, 1.01, 1.00]}");
+```
+
+And, if the value in the expected doesn't contain all the values from the
+array in the actual, then we can use `arrayContains` to both relax the order
+and allow matching of the ones found:
+
+```java
+assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+    .where()
+    .path("versions").arrayContains()
+    .isEqualTo("{\"name\":\"ModelAssert\", \"versions\":[1.02]}");
+```
+
+> Note: loose array comparison also honours the rules set in where
+> for the child nodes of the array. **The paths described are routes within
+> the actual tree, not the expected tree.**. So as every combination of
+> match is tried, the path rules may perform different comparisons on the
+> expected data, as it's checked against each actual.
 
 #### Common `where` Configuration
 

@@ -2,12 +2,13 @@ package uk.org.webcompere.modelassert.json.condition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
+import uk.org.webcompere.modelassert.json.condition.array.LooseComparison;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -21,39 +22,6 @@ public class ArrayContains implements Condition {
     private String description;
     private List<Condition> arrayElementConditions;
     private boolean requireStrict;
-
-    private static class Match {
-        private int index;
-        private Set<Integer> counterPartIndices = new HashSet<>();
-
-        public Match(int index) {
-            this.index = index;
-        }
-
-        public int size() {
-            return counterPartIndices.size();
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void add(int counterPart) {
-            counterPartIndices.add(counterPart);
-        }
-
-        public void remove(int counterPart) {
-            counterPartIndices.remove(counterPart);
-        }
-
-        public Stream<Integer> streamCounterparts() {
-            return counterPartIndices.stream();
-        }
-
-        public boolean contains(int counterpart) {
-            return counterPartIndices.contains(counterpart);
-        }
-    }
 
     /**
      * Construct the array contains condition
@@ -143,63 +111,8 @@ public class ArrayContains implements Condition {
     }
 
     private Result looseComparison(ArrayNode arrayNode) {
-        // each criterion may match many other elements
-        // try them all out
-        List<Match> matches = IntStream.range(0, arrayElementConditions.size())
-            .mapToObj(index -> calcMatches(index, arrayNode))
-            .collect(toList());
-
-        while (!matches.isEmpty()) {
-            matches.sort(Comparator.comparing(Match::size));
-            if (matches.get(0).size() == 0) {
-                return explainMismatches(matches);
-            }
-
-            removeLeastOccurringCounterpart(matches);
-        }
-
-        return new Result(describe(), "all matched", true);
-    }
-
-    private void removeLeastOccurringCounterpart(List<Match> matches) {
-        Multiset<Integer> multiset = HashMultiset.create();
-        matches.stream().flatMap(Match::streamCounterparts)
-            .forEach(multiset::add);
-
-        // least frequently occurring item
-        int leastFoundIndex = multiset.entrySet().stream().min(Comparator.comparing(Multiset.Entry::getCount))
-            .map(Multiset.Entry::getElement)
-            .orElseThrow(() -> new IllegalStateException("Cannot have no elements"));
-
-        // now let's find the smallest match of this
-        Match smallestMatch = matches.stream()
-            .filter(match -> match.contains(leastFoundIndex)).min(Comparator.comparing(Match::size))
-            .orElseThrow(() -> new IllegalStateException("Cannot have no elements"));
-
-        // we can remove this one
-        matches.remove(smallestMatch);
-
-        // then take the least found index out of the remainder
-        matches.forEach(match -> match.remove(leastFoundIndex));
-    }
-
-    private Result explainMismatches(List<Match> matches) {
-        matches.sort(Comparator.comparing(Match::getIndex));
-        return new Result(describe(), "No matches for:\n" + matches.stream()
-            .filter(match -> match.size() == 0)
-            .map(match -> "Index " + match.getIndex() + ": " +
-                arrayElementConditions.get(match.getIndex()).describe())
-            .collect(joining("\n")), false);
-    }
-
-    private Match calcMatches(int index, ArrayNode arrayNode) {
-        Match match = new Match(index);
-        for (int i = 0; i < arrayNode.size(); i++) {
-            if (arrayElementConditions.get(index).test(arrayNode.get(i)).isPassed()) {
-                match.add(i);
-            }
-        }
-        return match;
+        return LooseComparison.fromConditions(arrayElementConditions, () -> description)
+            .looseComparison(arrayNode);
     }
 
     private Result strictComparison(ArrayNode arrayNode) {

@@ -1,11 +1,15 @@
 package uk.org.webcompere.modelassert.json;
 
+import uk.org.webcompere.modelassert.json.impl.MemoizedSupplier;
+
+import java.util.function.Supplier;
+
 /**
  * The result of comparison. A mutable object passed through conditions to reach a pass/fail
  * with some explanation of why
  */
 public class Result {
-    private String condition;
+    private MemoizedSupplier<String> conditionSupplier;
     private String was;
     private boolean isPassed;
 
@@ -16,13 +20,25 @@ public class Result {
      * @param isPassed is this a success?
      */
     public Result(String condition, String was, boolean isPassed) {
-        this.condition = condition;
+        this.conditionSupplier = MemoizedSupplier.of(() -> condition);
+        this.was = was;
+        this.isPassed = isPassed;
+    }
+
+    /**
+     * Construct a result
+     * @param conditionSupplier supplies the condition being evaluated
+     * @param was what the answer actually was
+     * @param isPassed is this a success?
+     */
+    public Result(Supplier<String> conditionSupplier, String was, boolean isPassed) {
+        this.conditionSupplier = MemoizedSupplier.of(conditionSupplier);
         this.was = was;
         this.isPassed = isPassed;
     }
 
     public String getCondition() {
-        return condition;
+        return conditionSupplier.get();
     }
 
     /**
@@ -31,7 +47,8 @@ public class Result {
      * @return this for fluent calls
      */
     public Result withPreCondition(String condition) {
-        this.condition = condition + " " + this.condition;
+        Supplier<String> previousSupplier = conditionSupplier;
+        this.conditionSupplier = MemoizedSupplier.of(() -> condition + " " + previousSupplier.get());
         return this;
     }
 
@@ -41,7 +58,7 @@ public class Result {
      * @return this for fluent calls
      */
     public Result withNewDescription(String condition) {
-        this.condition = condition;
+        this.conditionSupplier = MemoizedSupplier.of(() -> condition);
         return this;
     }
 

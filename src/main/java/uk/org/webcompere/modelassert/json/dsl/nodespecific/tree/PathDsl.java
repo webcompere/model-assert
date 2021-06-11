@@ -52,6 +52,23 @@ public class PathDsl<A> implements JsonNodeAssertDsl<WhereDsl<A>> {
     }
 
     /**
+     * Relax the ordering requirement for an array at this position in the tree
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> arrayInAnyOrder() {
+        return whereDsl.pathRule(new PathRule(pathMatch, TreeRule.IGNORE_ARRAY_ORDER));
+    }
+
+    /**
+     * Allow the array at this position in the tree to just contain the other elements
+     * rather than match it completely
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> arrayContains() {
+        return whereDsl.pathRule(new PathRule(pathMatch, TreeRule.ARRAY_CONTAINS));
+    }
+
+    /**
      * Ignore everything at this path
      * @return the {@link WhereDsl} for fluent calling, with this path ignored
      */
