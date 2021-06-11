@@ -239,6 +239,7 @@ type specific assertions below, as well as:
   assertJson(jsonString)
     .at("/random").isMissing();
   ```
+- `isAnyNode` - the same as `isNotMissing` - useful when used with `.where()` in full tree matching
 - `isEmpty`/`isNotEmpty` - assert that the json at this location
   is an empty text, array, or object node
   ```java
@@ -362,6 +363,8 @@ some extra checking that this is a text node
     .at("/number").isBetween(2, 29);
   ```
 - `isZero` - asserts that the number is zero
+- `isNumber`, `isInteger`, `isLong`, `isDouble` - assert this is a numeric node
+or of a specific numeric type
 
 ### Boolean Context Conditions
 - `isTrue`/`isFalse` - requires the node to be boolean and have the correct value

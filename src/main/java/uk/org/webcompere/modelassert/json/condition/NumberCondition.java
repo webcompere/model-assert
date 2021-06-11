@@ -12,6 +12,7 @@ import java.util.Arrays;
  */
 public class NumberCondition<N extends Number> implements Condition {
     public enum Comparison {
+        NONE("correct type", new Comparison[0]),
         EQUAL_TO("equal to", new Comparison[0]),
         GREATER_THAN("greater than", new Comparison[0]),
         GREATER_THAN_OR_EQUAL("greater than or equal to", new Comparison[] { GREATER_THAN, EQUAL_TO }),
@@ -64,6 +65,14 @@ public class NumberCondition<N extends Number> implements Condition {
     }
 
     private boolean passesTypeTest(JsonNode json) {
+        if (comparison == Comparison.NONE) {
+            if (requiredType.equals(Integer.class)) {
+                return json.isInt();
+            }
+            if (requiredType.equals(Long.class)) {
+                return json.isLong();
+            }
+        }
         if (requiredType.equals(Integer.class)) {
             return json.canConvertToInt();
         }
@@ -77,6 +86,9 @@ public class NumberCondition<N extends Number> implements Condition {
     }
 
     private boolean passesNumericTest(JsonNode json) {
+        if (comparison == Comparison.NONE) {
+            return true;
+        }
         Comparison ordering = getNumericComparison(json);
         return comparison == ordering || Arrays.stream(comparison.alternatives).anyMatch(ordering::equals);
     }

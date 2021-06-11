@@ -1,15 +1,10 @@
 package uk.org.webcompere.modelassert.json.condition.array;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -101,13 +96,13 @@ public class LooseComparison {
     }
 
     private void removeLeastOccurringCounterpart(List<Match> matches) {
-        Multiset<Integer> multiset = HashMultiset.create();
+        Multiset<Integer> multiset = new Multiset<>();
         matches.stream().flatMap(Match::streamCounterparts)
             .forEach(multiset::add);
 
         // least frequently occurring item
-        int leastFoundIndex = multiset.entrySet().stream().min(Comparator.comparing(Multiset.Entry::getCount))
-            .map(Multiset.Entry::getElement)
+        int leastFoundIndex = multiset.entries().min(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
             .orElseThrow(() -> new IllegalStateException("Cannot have no elements"));
 
         // now let's find the smallest match of this

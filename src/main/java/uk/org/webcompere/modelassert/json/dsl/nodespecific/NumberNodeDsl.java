@@ -1,6 +1,8 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.condition.NumberCondition;
+import uk.org.webcompere.modelassert.json.condition.PredicateWrappedCondition;
 import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 
 import static uk.org.webcompere.modelassert.json.condition.Not.not;
@@ -94,6 +96,14 @@ public interface NumberNodeDsl<A> extends Satisfies<A>, NumberComparisonDsl<A> {
     }
 
     /**
+     * Assert that the node is a number node
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNumber() {
+        return satisfies(new PredicateWrappedCondition("Number", JsonNode::isNumber));
+    }
+
+    /**
      * Assert that the value is a number, equal to the given number
      * @param number the number to compare with
      * @return the assertion for fluent assertions, with this condition added
@@ -136,5 +146,29 @@ public interface NumberNodeDsl<A> extends Satisfies<A>, NumberComparisonDsl<A> {
      */
     default A isLessThanDouble(double number) {
         return satisfiesNumberCondition(new NumberCondition<>(Double.class, number, LESS_THAN));
+    }
+
+    /**
+     * Assert that the value is an number, castable to integer
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isInteger() {
+        return satisfiesNumberCondition(new NumberCondition<>(Integer.class, 0, NONE));
+    }
+
+    /**
+     * Assert that the value is an number, castable to long
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isLong() {
+        return satisfiesNumberCondition(new NumberCondition<>(Long.class, 0L, NONE));
+    }
+
+    /**
+     * Assert that the value is an number, castable to long
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isDouble() {
+        return satisfiesNumberCondition(new NumberCondition<>(Double.class, 0d, NONE));
     }
 }

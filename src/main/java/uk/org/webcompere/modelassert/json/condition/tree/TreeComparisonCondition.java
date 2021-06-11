@@ -75,7 +75,7 @@ public class TreeComparisonCondition implements Condition {
             return new Result(describe(), String.join("\n", failures), false);
         }
 
-        return new Result(describe(), "", true);
+        return new Result(describe(), "equal", true);
     }
 
     void compareTrees(JsonNode actual, JsonNode expected, Location pathToHere, List<String> failures) {

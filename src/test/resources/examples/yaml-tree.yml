@@ -1,0 +1,27 @@
+- name: Colin
+  age: 42
+  children:
+    - name: Bert
+      age: 16
+    - name: Rebecca
+      age: 13
+- name: Colin
+  age: 42
+  children:
+    - name: Bert
+      age: 16
+    - name: Mary
+      age: 16
+- name: Colin
+  age: 42
+  children:
+    - name: Bert
+      age: 16
+    - name: Rebecca
+      age: 13
+- name: Richard
+  age: 12
+  children: []
+- name: Carl
+  age: 42
+  children: []
