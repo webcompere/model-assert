@@ -53,6 +53,16 @@ public class MatchesTextCondition implements Condition {
     }
 
     /**
+     * Build a text starts with condition
+     * @param substring the substring to search
+     * @return a new {@link MatchesTextCondition} condition
+     */
+    public static MatchesTextCondition textStartsWith(String substring) {
+        return new MatchesTextCondition(Pattern.compile(Pattern.quote(substring) + ".*"),
+            "Text starts with " + substring);
+    }
+
+    /**
      * Build a matcher condition
      * @param pattern the pattern to match
      * @return a new {@link MatchesTextCondition} condition

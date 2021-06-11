@@ -81,6 +81,15 @@ public interface TextNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
     }
 
     /**
+     * Assert that the node is a text node with value different to the given one
+     * @param text the expected value
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotText(String text) {
+        return satisfiesTextCondition(not(new HasValue<>(JsonNode::asText, text)));
+    }
+
+    /**
      * Assert that the node is text and empty
      * @return the assertion for fluent assertions, with this condition added
      */
@@ -112,5 +121,23 @@ public interface TextNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
      */
     default A textDoesNotContain(String substring) {
         return satisfiesTextCondition(not(MatchesTextCondition.textContains(substring)));
+    }
+
+    /**
+     * Assert that the text of this node starts with a substring
+     * @param substring the substring to find
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A textStartsWith(String substring) {
+        return satisfiesTextCondition(MatchesTextCondition.textStartsWith(substring));
+    }
+
+    /**
+     * Assert that the text of this node does not start with a substring
+     * @param substring the substring to find
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A textDoesNotStartWith(String substring) {
+        return satisfiesTextCondition(not(MatchesTextCondition.textStartsWith(substring)));
     }
 }
