@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
+import uk.org.webcompere.modelassert.json.condition.array.ArrayElementCondition;
+import uk.org.webcompere.modelassert.json.condition.array.LooseComparison;
 import uk.org.webcompere.modelassert.json.impl.JsonProvider;
 
 import java.util.*;
@@ -76,7 +78,7 @@ public class TreeComparisonCondition implements Condition {
         return new Result(describe(), "", true);
     }
 
-    private void compareTrees(JsonNode actual, JsonNode expected, Location pathToHere, List<String> failures) {
+    void compareTrees(JsonNode actual, JsonNode expected, Location pathToHere, List<String> failures) {
         Optional<PathRule> alternativeCondition = findRule(pathToHere, TreeRule.CONDITION);
         if (alternativeCondition.isPresent()) {
             Result result = alternativeCondition.get().getRuleCondition().test(actual);
@@ -178,11 +180,36 @@ public class TreeComparisonCondition implements Condition {
     }
 
     private void compareArrays(ArrayNode actual, ArrayNode expected, Location pathToHere, List<String> failures) {
-        if (actual.size() != expected.size()) {
-            failures.add(pathToHere.toString() + ": arrays have different size, expected: " +
-                expected.size() + " actual: " + actual.size());
+        boolean usingArrayContains = findRule(pathToHere, TreeRule.ARRAY_CONTAINS).isPresent();
+        if (!usingArrayContains) {
+            if (actual.size() != expected.size()) {
+                failures.add(pathToHere.toString() + ": arrays have different size, expected: " +
+                    expected.size() + " actual: " + actual.size());
+            }
         }
 
+        if (!findRule(pathToHere, TreeRule.IGNORE_ARRAY_ORDER).isPresent() && !usingArrayContains) {
+            performExactArrayComparison(actual, expected, pathToHere, failures);
+        } else {
+            performLooseArrayComparison(actual, expected, pathToHere, failures);
+        }
+    }
+
+    private void performLooseArrayComparison(ArrayNode actual, ArrayNode expected,
+                                             Location pathToHere, List<String> failures) {
+        List<ArrayElementCondition> expectedConditions = new LinkedList<>();
+        for (int i = 0; i < expected.size(); i++) {
+            expectedConditions.add(new ArrayComparisonElementCondition(expected.get(i), i, pathToHere, this));
+        }
+        Result result = new LooseComparison(expectedConditions, () -> "Matches array at " + pathToHere.toString())
+            .looseComparison(actual);
+        if (!result.isPassed()) {
+            failures.add(result.getCondition() + " " + result.getWas());
+        }
+    }
+
+    private void performExactArrayComparison(ArrayNode actual, ArrayNode expected,
+                                             Location pathToHere, List<String> failures) {
         for (int i = 0; i < Math.min(actual.size(), expected.size()); i++) {
             compareTrees(actual.get(i), expected.get(i), pathToHere.child(Integer.toString(i)), failures);
         }

@@ -146,6 +146,10 @@ class ExamplesTest {
                 .isNotEmpty(); // additional clause
     }
 
+    private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {
+        return assertion.at("/root/name").isText("Mr Name");
+    }
+
     @Test
     void canUseGreaterThanWithInteger() {
         assertJson("{number:12}")
@@ -323,6 +327,30 @@ class ExamplesTest {
     }
 
     @Test
+    void compareWholeJsonTreeByStringWithArrayOrderingRelaxed() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .where()
+            .arrayInAnyOrder()
+            .isEqualTo("{\"name\":\"ModelAssert\", \"versions\":[1.02, 1.01, 1.00]}");
+    }
+
+    @Test
+    void compareWholeJsonTreeByStringWithArrayOrderingRelaxedByPath() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .where()
+            .path("versions").arrayInAnyOrder()
+            .isEqualTo("{\"name\":\"ModelAssert\", \"versions\":[1.02, 1.01, 1.00]}");
+    }
+
+    @Test
+    void compareWholeJsonTreeByStringWithArrayContainsByPath() {
+        assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
+            .where()
+            .path("versions").arrayContains()
+            .isEqualTo("{\"name\":\"ModelAssert\", \"versions\":[1.02]}");
+    }
+
+    @Test
     void usingAndLogic() {
         assertJson("\"some string\"").satisfies(
             textMatches(Pattern.compile("[a-z ]+"))
@@ -447,13 +475,10 @@ class ExamplesTest {
         MatcherAssert.assertThat(yaml1, yaml().isEqualToYaml(yaml2));
     }
 
+
     @Test
     void canCompareJsonWithYaml() {
         assertJson("[1, 2, 3, 4]")
             .isEqualToYaml("- 1\n- 2\n- 3\n- 4");
-    }
-
-    private static <A> A theUsual(JsonNodeAssertDsl<A> assertion) {
-        return assertion.at("/root/name").isText("Mr Name");
     }
 }
