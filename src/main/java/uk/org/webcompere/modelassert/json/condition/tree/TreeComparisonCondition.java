@@ -130,7 +130,11 @@ public class TreeComparisonCondition implements Condition {
         Set<String> extraKeys = new HashSet<>(actualKeys);
         extraKeys.removeAll(expectedKeys);
 
-        reportKeys("unexpected", actual, pathToHere, failures, extraKeys);
+        boolean usingObjectContains = findRule(pathToHere, TreeRule.OBJECT_CONTAINS).isPresent();
+
+        if (!usingObjectContains) {
+            reportKeys("unexpected", actual, pathToHere, failures, extraKeys);
+        }
         reportKeys("missing", actual, pathToHere, failures, missingKeys);
 
         Set<String> actualKeysWithoutExtras = new LinkedHashSet<>(actualKeys);
@@ -139,7 +143,7 @@ public class TreeComparisonCondition implements Condition {
         expectedKeysFoundInActual.retainAll(actualKeys);
 
         // conditionally check the order of the keys
-        if (!findRule(pathToHere, TreeRule.IGNORE_KEY_ORDER).isPresent()) {
+        if (!usingObjectContains && keysShouldBeInOrder(pathToHere)) {
             checkKeyOrder(pathToHere, failures, actualKeysWithoutExtras, expectedKeysFoundInActual);
         }
 
@@ -147,6 +151,11 @@ public class TreeComparisonCondition implements Condition {
         for (String key: actualKeysWithoutExtras) {
             compareTrees(actual.get(key), expected.get(key), pathToHere.child(key), failures);
         }
+    }
+
+    private boolean keysShouldBeInOrder(Location pathToHere) {
+        return findRule(pathToHere, TreeRule.REQUIRE_KEY_ORDER).isPresent() ||
+            !findRule(pathToHere, TreeRule.IGNORE_KEY_ORDER).isPresent();
     }
 
     private void reportKeys(String name, ObjectNode actual, Location pathToHere,

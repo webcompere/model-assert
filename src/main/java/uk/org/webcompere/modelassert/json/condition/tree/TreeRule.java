@@ -7,6 +7,11 @@ public enum TreeRule {
     IGNORE_KEY_ORDER,
 
     /**
+     * When the key order is important
+     */
+    REQUIRE_KEY_ORDER,
+
+    /**
      * Apply a specific condition instead of the tree comparison
      */
     CONDITION,
@@ -21,4 +26,9 @@ public enum TreeRule {
      * can be combined with allowing any order
      */
     ARRAY_CONTAINS,
+
+    /**
+     * Skip over fields that are missing in the other object - implies keys in any order
+     */
+    OBJECT_CONTAINS,
 }

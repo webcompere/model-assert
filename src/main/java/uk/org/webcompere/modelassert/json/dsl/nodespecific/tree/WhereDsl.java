@@ -38,6 +38,14 @@ public class WhereDsl<A> implements IsEqualToDsl<A> {
     }
 
     /**
+     * Allow missing keys in objects
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> objectContains() {
+        return pathRule(new PathRule(TreeRule.OBJECT_CONTAINS));
+    }
+
+    /**
      * Relax the ordering requirement for an array, everywhere
      * @return <code>this</code> for fluent calling
      */
