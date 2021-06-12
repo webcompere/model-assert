@@ -71,7 +71,7 @@ See [where context](#where-context) for more examples.
 
 There are more examples in the unit tests, especially [`ExamplesTest`](src/test/java/uk/org/webcompere/modelassert/json/ExamplesTest.java).
 
-The `assertJson` methods produces stand-alone assertions which
+The `assertJson` methods produce stand-alone assertions which
 execute each clause in order, stopping on error.
 
 The `json*` methods - `json`, `jsonNode`, `jsonFile`, `jsonFilePath` start the
