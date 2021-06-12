@@ -281,10 +281,17 @@ class WholeTreeUseCaseTest {
     }
 
     @Test
-    void tolerateArrayOutOfOrder() throws Exception {
+    void tolerateArrayOutOfOrder() {
         assertJson(resourcePath("json-string-array-alphabetic.json"))
             .where().path("data").arrayInAnyOrder()
             .isEqualTo(resourcePath("json-string-array-scrambled.json"));
+    }
+
+    @Test
+    void tolerateArrayOutOfOrderByFile() {
+        assertJson(resourcePath("json-string-array-alphabetic.json"))
+            .where().path("data").arrayInAnyOrder()
+            .isEqualTo(resourcePath("json-string-array-scrambled.json").toFile());
     }
 
     @Test
@@ -295,6 +302,13 @@ class WholeTreeUseCaseTest {
     }
 
     @Test
+    void willNotTolerateArrayMissingAValueByFile() {
+        assertJson(resourcePath("json-string-array-alphabetic.json"))
+            .where().path("data").arrayInAnyOrder()
+            .isNotEqualTo(resourcePath("json-string-array-scrambled-and-missing.json").toFile());
+    }
+
+    @Test
     void willNotTolerateArrayWithExtraValue() {
         assertJson(resourcePath("json-string-array-alphabetic.json"))
             .where().path("data").arrayInAnyOrder()
@@ -302,7 +316,7 @@ class WholeTreeUseCaseTest {
     }
 
     @Test
-    void willAllowSubObjectsInSameOrder() throws Exception {
+    void willAllowSubObjectsInSameOrder() {
         // without the any order
         assertJson(resourcePath("json-array-of-objects-in-order.json"))
             .isEqualTo(resourcePath("json-array-of-objects-in-order.json"));
@@ -314,7 +328,7 @@ class WholeTreeUseCaseTest {
     }
 
     @Test
-    void willAllowSubObjectsInDifferentOrder() throws Exception {
+    void willAllowSubObjectsInDifferentOrder() {
         assertJson(resourcePath("json-array-of-objects-in-order.json"))
             .where().path("data").arrayInAnyOrder()
             .isEqualTo(resourcePath("json-array-of-objects-out-of-order.json"));

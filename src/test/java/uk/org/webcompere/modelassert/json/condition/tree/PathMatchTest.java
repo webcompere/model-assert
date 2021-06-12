@@ -3,6 +3,7 @@ package uk.org.webcompere.modelassert.json.condition.tree;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.PathWildCard.ANY;
 import static uk.org.webcompere.modelassert.json.PathWildCard.ANY_SUBTREE;
 
@@ -75,5 +76,31 @@ class PathMatchTest {
 
         assertThat(match.matches(new Location().child("a").child("b").child("c").child("d")))
             .isTrue();
+    }
+
+    @Test
+    void pathMustStartSlash() {
+        assertThatThrownBy(() -> PathMatch.ofJsonPointer("foo"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void canApplyToRootOnlyWithRootPath() {
+        PathMatch rootMatch = PathMatch.ofJsonPointer("/");
+        assertThat(rootMatch.matches(new Location()))
+            .isTrue();
+        assertThat(rootMatch.matches(new Location().child("a"))).isFalse();
+    }
+
+    @Test
+    void cannotProvideWhitespaceInPath() {
+        assertThatThrownBy(() -> PathMatch.ofJsonPointer("/a /"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void cannotProvideEmptyInPath() {
+        assertThatThrownBy(() -> PathMatch.ofJsonPointer("/a//b/c"))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

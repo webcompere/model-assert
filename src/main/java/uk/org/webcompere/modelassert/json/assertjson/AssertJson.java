@@ -3,9 +3,9 @@ package uk.org.webcompere.modelassert.json.assertjson;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opentest4j.AssertionFailedError;
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.impl.CoreJsonAssertion;
-import uk.org.webcompere.modelassert.json.impl.JsonProvider;
 
 /**
  * The assertJson form of the assertion

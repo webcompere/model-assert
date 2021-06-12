@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.condition.array.ArrayElementCondition;
 import uk.org.webcompere.modelassert.json.condition.array.LooseComparison;
-import uk.org.webcompere.modelassert.json.impl.JsonProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Compare with a whole JSON structure
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 public class TreeComparisonCondition implements Condition {
 
     private JsonNode expected;
-    private List<PathRule> rules = new LinkedList<>();
+    private LinkedList<PathRule> rules = new LinkedList<>();
 
     /**
      * Constructor is private, use factory methods
@@ -165,9 +167,14 @@ public class TreeComparisonCondition implements Condition {
     }
 
     private Optional<PathRule> findRule(Location pathToHere, TreeRule ruleToFind) {
-        return rules.stream()
+        return rulesInPriorityOrder()
             .filter(rule -> rule.matches(pathToHere) && rule.getRule().equals(ruleToFind))
             .findFirst();
+    }
+
+    private Stream<PathRule> rulesInPriorityOrder() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(rules.descendingIterator(),
+            Spliterator.ORDERED), false);
     }
 
     private void checkKeyOrder(Location pathToHere, List<String> failures,

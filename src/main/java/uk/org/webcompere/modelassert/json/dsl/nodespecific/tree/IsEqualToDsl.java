@@ -6,7 +6,7 @@ import uk.org.webcompere.modelassert.json.condition.tree.TreeComparisonCondition
 import java.io.File;
 import java.nio.file.Path;
 
-import static uk.org.webcompere.modelassert.json.impl.JsonProviders.*;
+import static uk.org.webcompere.modelassert.json.JsonProviders.*;
 
 /**
  * The core DSL for <code>isEqualTo</code> and <code>isNotEqualTo</code>

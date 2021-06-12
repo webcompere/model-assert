@@ -5,6 +5,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.condition.JsonIsNotNull;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
@@ -43,9 +44,11 @@ public abstract class CoreJsonAssertion<T, A extends CoreJsonAssertion<T, A>> ex
         return (A)this;
     }
 
+    // hamcrest doesn't provide type safety but this object is constrained by generics
     @Override
+    @SuppressWarnings({"unchecked", "java:S1905"})
     public boolean matches(Object item) {
-        JsonNode jsonNode = jsonProvider.jsonFrom(item);
+        JsonNode jsonNode = jsonProvider.jsonFrom((T)item);
         return conditions.stream()
                 .map(condition -> condition.test(jsonNode))
                 .allMatch(Result::isPassed);
@@ -59,8 +62,9 @@ public abstract class CoreJsonAssertion<T, A extends CoreJsonAssertion<T, A>> ex
     }
 
     @Override
+    @SuppressWarnings({"unchecked", "java:S1905"})
     public void describeMismatch(Object item, Description description) {
-        JsonNode jsonNode = jsonProvider.jsonFrom(item);
+        JsonNode jsonNode = jsonProvider.jsonFrom((T)item);
         description.appendText(conditions.stream()
                 .map(condition -> condition.test(jsonNode))
                 .filter(res -> !res.isPassed())

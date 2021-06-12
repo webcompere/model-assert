@@ -1,8 +1,8 @@
 package uk.org.webcompere.modelassert.json.hamcrest;
 
 import uk.org.webcompere.modelassert.json.Condition;
+import uk.org.webcompere.modelassert.json.JsonProvider;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
-import uk.org.webcompere.modelassert.json.impl.JsonProvider;
 
 /**
  * This is an interim object - the result of starting to build a hamcrest JSON assertion. It is not, itself

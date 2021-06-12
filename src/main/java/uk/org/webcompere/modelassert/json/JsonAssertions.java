@@ -7,7 +7,7 @@ import uk.org.webcompere.modelassert.json.hamcrest.HamcrestJsonAssertionBuilder;
 import java.io.File;
 import java.nio.file.Path;
 
-import static uk.org.webcompere.modelassert.json.impl.JsonProviders.*;
+import static uk.org.webcompere.modelassert.json.JsonProviders.*;
 
 /**
  * Jumping on point - create either an assertJson or a hamcrest. Facade/factory methods.
