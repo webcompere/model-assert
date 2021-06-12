@@ -506,4 +506,39 @@ class ExamplesTest {
             .at("/child")
             .isEqualTo(jsonNode.at("/child"));
     }
+
+    @Test
+    void whenKeysAreInWrongOrderTheKeysInAnyOrderFixesIt() {
+        assertJson("{a:{}, b:{c:true, d:false}}")
+            .where()
+            .keysInAnyOrder()
+            .isEqualTo("{b:{d:false, c:true},a:{}}");
+    }
+
+    @Test
+    void whenKeysAreInWrongOrderAndKeysCanBeInCorrectOrderExceptAtOnePath_thenNotEqual() {
+        assertJson("{a:{}, b:{c:true, d:false}}")
+            .where()
+            .keysInAnyOrder()
+            .at("/b").keysInOrder()
+            .isNotEqualTo("{b:{d:false, c:true},a:{}}");
+    }
+
+    @Test
+    void whenKeysAreMissingInTheActualThenObjectContainsFixesIt() {
+        assertJson("{a:{}, b:{c:true, d:false}}")
+            .where()
+            .keysInAnyOrder()
+            .objectContains()
+            .isEqualTo("{b:{d:false, c:true}}");
+    }
+
+    @Test
+    void atPath_whenKeysAreMissingInTheActualThenObjectContainsFixesIt() {
+        assertJson("{z:{a:{}, b:{c:true, d:false}}}")
+            .where()
+            .keysInAnyOrder()
+            .path("z").objectContains()
+            .isEqualTo("{z:{b:{d:false, c:true}}}");
+    }
 }

@@ -7,7 +7,7 @@ import uk.org.webcompere.modelassert.json.condition.tree.PathRule;
 import uk.org.webcompere.modelassert.json.condition.tree.TreeRule;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 
-import static uk.org.webcompere.modelassert.json.condition.tree.TreeRule.IGNORE_KEY_ORDER;
+import static uk.org.webcompere.modelassert.json.condition.tree.TreeRule.*;
 
 /**
  * Path DSL context within the {@link WhereDsl}
@@ -45,11 +45,28 @@ public class PathDsl<A> implements JsonNodeAssertDsl<WhereDsl<A>> {
     }
 
     /**
-     * Add a {@link TreeRule#IGNORE_KEY_ORDER} to the where clause
+     * Add a {@link TreeRule#IGNORE_KEY_ORDER} to the clause
      * @return the {@link WhereDsl} for fluent calling with the path added
      */
     public WhereDsl<A> keysInAnyOrder() {
         return whereDsl.pathRule(new PathRule(pathMatch, IGNORE_KEY_ORDER));
+    }
+
+    /**
+     * Add a {@link TreeRule#REQUIRE_KEY_ORDER} to the path - this can't be done in {@link WhereDsl}
+     * as it is already the default so wouldn't mean anything
+     * @return the {@link WhereDsl} for fluent calling with the path added
+     */
+    public WhereDsl<A> keysInOrder() {
+        return whereDsl.pathRule(new PathRule(pathMatch, REQUIRE_KEY_ORDER));
+    }
+
+    /**
+     * Allow missing keys in objects
+     * @return the {@link WhereDsl} for fluent calling with the path added
+     */
+    public WhereDsl<A> objectContains() {
+        return whereDsl.pathRule(new PathRule(pathMatch, OBJECT_CONTAINS));
     }
 
     /**

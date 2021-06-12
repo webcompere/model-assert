@@ -182,6 +182,7 @@ After that, there are high level methods to add conditions to the matcher:
 
 - `at` - start creating a JSON Pointer based assertion
 - `isNull`/`isNotNull` - asserts whether the whole loaded JSON amounts to `null`
+- `isEqualTo`/`isNotEqualTo` - compare this tree against another
 - `satisfies` - plug in a custom `Condition` or `ConditionList`
 
 When a condition has been added to the assertion then the fluent DSL
@@ -200,12 +201,11 @@ There are multiple contexts from which assertions are available:
 - **Node** - this allows any assertion on the current node, which may be of any valid json type as well as `missing`
 - **Type specific** - by calling `number`, `text`, `object`, `array`, or `booleanNode` on a node context DSL, the DSL
 can be narrowed down to assertions for just that type - this can also be more expressive
+    ```java
+    assertJson(json)
+       .at("/name").text().isText("My Name");
+    ```
 - **Where** - called before `isEqualTo` to create rules for whole tree comparison
-
-```java
-assertJson(json)
-   .at("/name").text().isText("My Name");
-```
 
 ### Json At
 
@@ -534,7 +534,8 @@ assertJson("{\"name\":\"ModelAssert\",\"versions\":[1.00, 1.01, 1.02]}")
 In the where context, we can add general leniency overrides, or specify overrides
 for particular paths.
 
-- `keysInAnyOrder` - allows all objects at all paths to skip the key order check
+- `keysInAnyOrder`/`keysInOrder` - controls whether objects observe order checks - when used just after `where` this applies to the whole tree, otherwise it applies to the path exression
+- `objectContains` - the object ignored missing values in the _actual_
 - `arrayInAnyOrder` - array elements can be in any order
 - `arrayContains` - array elements can be in any order and the actual may have additional elements
 - `path` - start customising the rule for a particular path in the tree:
@@ -553,7 +554,8 @@ for particular paths.
 Within the path expression, we then add further conditions:
 
 - Any conditions from Node context
-- `keysInAnyOrder` - specific matches for the current path
+- `keysInAnyOrder`/`keysInOrder` - specific matches for the current path
+- `objectContains` - the object ignored missing values in the _actual_
 - `arrayInAnyOrder` - array elements can be in any order
 - `arrayContains` - array elements can be in any order and the actual may have additional elements
 - `isIgnored` - the path is just ignored
@@ -595,6 +597,9 @@ assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
         "\"b\":{\"guid\":\"?\"}," +
         "\"c\":{\"guid\":\"?\"}}");
 ```
+
+> Note: the rules used with `where` are evaluated in reverse order
+> so the most general should be provided first, and the most specific last.
 
 #### Loose Array Matching
 
