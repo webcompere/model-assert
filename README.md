@@ -141,6 +141,25 @@ The Hamcrest version of this uses `yaml`/`yamlFile` and `yamlFilePath`:
 MatcherAssert.assertThat(yaml1, yaml().isEqualToYaml(yaml2));
 ```
 
+### Manipulating Json Before or During Assertions
+
+The assertion DSL allows a lot of navigation within the json under test.
+However, it may be desirable to manually load some json for comparison, and perhaps
+use only a part of that json:
+
+```java
+// load some json to compare against
+JsonNode jsonNode = JsonProviders.jsonPathProvider().jsonFrom(jsonFile);
+
+// compare "/child" within a source
+assertJson(jsonFile)
+    .at("/child")
+
+    // must be equal to the "/child" we've selected
+    // from an "actual"
+    .isEqualTo(jsonNode.at("/child"));
+```
+
 ## Building the Assertion
 
 The entry point to creating an assertion is:

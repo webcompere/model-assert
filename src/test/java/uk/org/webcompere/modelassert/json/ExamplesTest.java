@@ -1,5 +1,6 @@
 package uk.org.webcompere.modelassert.json;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import uk.org.webcompere.modelassert.json.condition.HasSize;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 import uk.org.webcompere.modelassert.json.dsl.nodespecific.tree.WhereDsl;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 import java.util.HashMap;
@@ -316,6 +318,19 @@ class ExamplesTest {
     }
 
     @Test
+    void canAllowAnAnyOrderOnJustTheRootNode() {
+        assertJson("{\"a\":{\"guid\":\"fa82142d-13d2-49c4-9878-619c90a9f986\"}," +
+            "\"b\":{\"guid\":\"96734f31-33c3-4e50-a72b-49bf2d990e33\"}," +
+            "\"c\":{\"guid\":\"064c8c5a-c9c1-4ea0-bf36-1994104aa870\"}}")
+            .where()
+            .at("/").keysInAnyOrder()
+            .path(ANY_SUBTREE, "guid").matches(GUID_PATTERN)
+            .isEqualTo("{\"a\":{\"guid\":\"?\"}," +
+                "\"c\":{\"guid\":\"?\"}," +
+                "\"b\":{\"guid\":\"?\"}}");
+    }
+
+    @Test
     void isNotMatchesForNonGuid() {
         assertJson("{\"a\":{\"guid\":\"fa82142d-13d2\"}," +
             "\"b\":{\"guid\":\"96734f31-33c3-4e50\"}," +
@@ -480,5 +495,15 @@ class ExamplesTest {
     void canCompareJsonWithYaml() {
         assertJson("[1, 2, 3, 4]")
             .isEqualToYaml("- 1\n- 2\n- 3\n- 4");
+    }
+
+    @Test
+    void loadYourOwnJson() {
+        Path jsonFile = Paths.get("src", "test", "resources", "simple.json");
+        JsonNode jsonNode = JsonProviders.jsonPathProvider().jsonFrom(jsonFile);
+
+        assertJson(jsonFile)
+            .at("/child")
+            .isEqualTo(jsonNode.at("/child"));
     }
 }

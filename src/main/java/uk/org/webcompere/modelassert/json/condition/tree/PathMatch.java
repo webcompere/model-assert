@@ -53,12 +53,13 @@ public class PathMatch {
         }
 
         String[] parts = jsonPointer.split(JSON_POINTER_DELIMITER);
-        String[] nonBlankParts = Arrays.copyOfRange(parts, 1, parts.length);
-        if (Arrays.stream(nonBlankParts).anyMatch(part -> !part.trim().equals(part) || part.isEmpty())) {
+        if (Arrays.stream(parts)
+            .skip(1)
+            .anyMatch(part -> !part.trim().equals(part) || part.isEmpty())) {
             throw new IllegalArgumentException("Invalid spacing or blanks in " + jsonPointer);
         }
 
-        return new PathMatch(nonBlankParts);
+        return new PathMatch(Arrays.stream(parts).skip(1).toArray(String[]::new));
     }
 
     /**
@@ -67,6 +68,9 @@ public class PathMatch {
      * @return <code>true</code> if the path matches
      */
     public boolean matches(Location location) {
+        if (matchers.isEmpty()) {
+            return location.isEmpty();
+        }
         return matchers.get(0).matches(location, matchers.subList(1, matchers.size()));
     }
 

@@ -1,4 +1,4 @@
-package uk.org.webcompere.modelassert.json.impl;
+package uk.org.webcompere.modelassert.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opentest4j.AssertionFailedError;
@@ -25,8 +25,7 @@ public interface JsonProvider<T> {
      *             but we allow it to be <code>Object</code> as Hamcrest is poorly behaved with type safety
      * @return the loaded {@link JsonNode} or an assertion failure if the load failed, or the input is null
      */
-    @SuppressWarnings("unchecked") // hamcrest doesn't provide type safety but this object is constrained by generics
-    default JsonNode jsonFrom(Object item) {
+    default JsonNode jsonFrom(T item) {
         if (item == null) {
             return null;
         }

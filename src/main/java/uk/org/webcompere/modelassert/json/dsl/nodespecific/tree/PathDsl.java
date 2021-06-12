@@ -27,7 +27,8 @@ public class PathDsl<A> implements JsonNodeAssertDsl<WhereDsl<A>> {
     }
 
     /**
-     * Create a path DSL from a JSON Pointer expression
+     * Create a path DSL from a JSON Pointer expression. Note: this allows for matching to the root
+     * object with a path of <code>"/"</code>
      * @param where the parent where
      * @param jsonPointer the pointer expression
      * @param <A> the type of assertion
