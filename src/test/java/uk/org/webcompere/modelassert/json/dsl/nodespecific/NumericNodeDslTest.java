@@ -167,4 +167,16 @@ class NumericNodeDslTest {
         assertAllWays("7", "8",
             assertion -> assertion.isBetween(2, 7));
     }
+
+    @Test
+    void isNotNumber() {
+        assertAllWays("\"\"", "1",
+            assertion -> assertion.isNotNumber());
+    }
+
+    @Test
+    void isNumber() {
+        assertAllWays("1", "\"\"",
+            assertion -> assertion.isNumber());
+    }
 }

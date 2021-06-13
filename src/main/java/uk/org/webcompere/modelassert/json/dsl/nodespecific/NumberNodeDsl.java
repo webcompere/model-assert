@@ -96,6 +96,14 @@ public interface NumberNodeDsl<A> extends Satisfies<A>, NumberComparisonDsl<A> {
     }
 
     /**
+     * Assert that the node is not a number node
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotNumber() {
+        return satisfies(not(new PredicateWrappedCondition("Number", JsonNode::isNumber)));
+    }
+
+    /**
      * Assert that the node is a number node
      * @return the assertion for fluent assertions, with this condition added
      */
