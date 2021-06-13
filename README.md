@@ -16,7 +16,15 @@ a route to the element is a series of `/` delimited field names or array indices
 
 ModelAssert requires Java 8.
 
-t.b.c.
+Install from Maven Central:
+
+```xml
+<dependency>
+  <groupId>uk.org.webcompere</groupId>
+  <artifactId>model-assert</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
 ## Quickstart
 
