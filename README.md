@@ -778,7 +778,7 @@ versions are unlikely to have any noticeable effect on the API.
 
 ## Contributing
 
-If you experience any problems using this idea, or have any ideas, then please
+If you experience any problems using this library, or have any ideas, then please
 [raise an issue](https://github.com/webcompere/model-assert/issues/new/choose). Please
 check for any [existing issues](https://github.com/webcompere/model-assert/issues) first.
 
