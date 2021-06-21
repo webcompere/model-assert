@@ -28,6 +28,8 @@ Install from Maven Central:
 
 ## Quickstart
 
+For a walk-through of key features, there's a [tutorial over on Baeldung.com](https://www.baeldung.com/json-modelassert).
+
 ### Path Assertions
 
 ```java
