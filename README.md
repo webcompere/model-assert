@@ -12,6 +12,11 @@ a more powerful alternative to Spring's [`jsonPath`](https://docs.spring.io/spri
 Describes paths using [JSON Pointer](https://gregsdennis.github.io/Manatee.Json/usage/pointer.html) syntax, where
 a route to the element is a series of `/` delimited field names or array indices.
 
+> NOTE: To resolve some vulnerabilities, including CVEs found in `snakeyaml`, this version is
+> built against an rc of `jackson-databind` and `jackson-dataformat-yaml`. A future release
+> will upgrade to the LTS version of these libraries, but the dependency is light weight enough that
+> overriding these dependencies in your project is unlikely to be an issue.
+
 ## Installation
 
 ModelAssert requires Java 8.
@@ -22,7 +27,7 @@ Install from Maven Central:
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>model-assert</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 

@@ -1,6 +1,7 @@
 package uk.org.webcompere.modelassert.json.condition.array;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 
@@ -53,6 +54,7 @@ public class LooseComparison {
     private Supplier<String> description;
 
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public LooseComparison(List<ArrayElementCondition> arrayElementConditions, Supplier<String> description) {
         this.arrayElementConditions = arrayElementConditions;
         this.description = description;

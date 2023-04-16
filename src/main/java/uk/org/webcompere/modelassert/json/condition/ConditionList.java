@@ -1,5 +1,6 @@
 package uk.org.webcompere.modelassert.json.condition;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.dsl.JsonNodeAssertDsl;
 
@@ -24,6 +25,7 @@ public class ConditionList implements JsonNodeAssertDsl<ConditionList> {
      * Get the conditions
      * @return
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public List<Condition> getConditionList() {
         return conditionList;
     }
