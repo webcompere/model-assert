@@ -1,6 +1,7 @@
 version: '{build}'
 image:
   - Ubuntu
+stack: jdk 8
 build_script:
   - ./mvnw clean package -DskipTests
 test_script:
