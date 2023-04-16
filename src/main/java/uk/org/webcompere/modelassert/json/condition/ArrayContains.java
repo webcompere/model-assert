@@ -2,6 +2,7 @@ package uk.org.webcompere.modelassert.json.condition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import uk.org.webcompere.modelassert.json.Condition;
 import uk.org.webcompere.modelassert.json.Result;
 import uk.org.webcompere.modelassert.json.condition.array.LooseComparison;
@@ -29,6 +30,7 @@ public class ArrayContains implements Condition {
      * @param arrayElementConditions the per element conditions
      * @param requireStrict whether the conditions are executed in strict order
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public ArrayContains(String description, List<Condition> arrayElementConditions, boolean requireStrict) {
         this.description = description;
         this.arrayElementConditions = arrayElementConditions;
