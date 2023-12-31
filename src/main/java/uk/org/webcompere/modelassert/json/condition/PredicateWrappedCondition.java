@@ -47,6 +47,9 @@ public class PredicateWrappedCondition implements Condition {
      */
     @Override
     public Result test(JsonNode json) {
+        if (json == null) {
+            return new Result(describe(), "<null>", false);
+        }
         if (!typeDetector.test(json)) {
             return new Result(describe(), json.getNodeType().toString(), false);
         }

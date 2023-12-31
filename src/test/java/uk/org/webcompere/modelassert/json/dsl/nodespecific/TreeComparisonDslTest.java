@@ -175,4 +175,12 @@ class TreeComparisonDslTest {
                 .path("a").arrayContains()
                 .isEqualTo("{a:[3, 2, 1]}"));
     }
+
+    @Test
+    void givenObjectWithMissingKeyThenCanStillHaveRulesForWhenKeyIsPresent() {
+        assertAllWays("{a:1}", "{}",
+                assertion -> assertion.where()
+                        .path("a").isInteger()
+                        .isEqualTo("{a:42}"));
+    }
 }
