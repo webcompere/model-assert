@@ -177,7 +177,7 @@ class TreeComparisonDslTest {
     }
 
     @Test
-    void iAmNotInspiredToFindANameForThisTest() {
+    void givenObjectWithMissingKeyThenCanStillHaveRulesForWhenKeyIsPresent() {
         assertAllWays("{a:1}", "{}",
                 assertion -> assertion.where()
                         .path("a").isInteger()
