@@ -772,6 +772,46 @@ content().string(
 While this syntax is of limited value in this simple case, the more powerful comparisons supported
 by this library are equally possible after the `json()` statement starts creating a matcher.
 
+### Custom Object Mappers
+
+By default, Model Assert uses two `ObjectMapper` objects - one for loading JSON and one for loading YAML.
+These can be overridden for the current thread (allowing concurrent testing) and it's advisable to do this
+in the `@BeforeAll` of a text fixture:
+
+```java
+@BeforeAll
+static void beforeAll() {
+    // support LocalDateTime
+    overrideObjectMapper(defaultObjectMapper()
+        .registerModule(new JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
+
+    // stop parsing `yes` to mean Boolean `true`
+    overrideYamlObjectMapper(new ObjectMapper(
+        new YAMLFactory()
+            .configure(PARSE_BOOLEAN_LIKE_WORDS_AS_STRINGS, true)));
+}
+```
+
+and when replacing the object mapper in setup, it's a good idea to put it back in the tear down:
+
+```java
+@AfterAll
+static void afterAll() {
+    clearObjectMapperOverride();
+    clearYamlObjectMapperOverride();
+}
+```
+
+Any assertions used while the override is in place will use the alternative object mapper.
+
+> Note: if using a common alternative object mapper, maybe consider building a small JUnit 5 test extension
+> or [use a base class](./src/test/java/uk/org/webcompere/modelassert/json/OverrideObjectMapper.java) for your tests
+> which contains the common set up
+
+The functions `defaultObjectMapper` and `defaultYamlMapper` in `JsonProviders` can be used to create a basic `ObjectMapper`
+to base a custom one on.
+
 ## API Stability
 
 The classes in the root package `uk.org.webcompere.modelassert.json` are the jumping
