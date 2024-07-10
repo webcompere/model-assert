@@ -1,6 +1,6 @@
 # ModelAssert
 
-[![Build status](https://ci.appveyor.com/api/projects/status/x87jeu1yia9b40bp?svg=true)](https://ci.appveyor.com/project/ashleyfrieze/model-assert) [![codecov](https://codecov.io/gh/webcompere/model-assert/branch/main/graph/badge.svg?token=SJ9ZKQVO5T)](https://codecov.io/gh/webcompere/model-assert)
+[![Build on Push](https://github.com/webcompere/model-assert/actions/workflows/build-actions.yml/badge.svg)](https://github.com/webcompere/model-assert/actions/workflows/build-actions.yml)[![codecov](https://codecov.io/gh/webcompere/model-assert/branch/main/graph/badge.svg?token=SJ9ZKQVO5T)](https://codecov.io/gh/webcompere/model-assert)
 
 
 Assertions for model data. Inspired by [JSONAssert](https://github.com/skyscreamer/JSONassert)

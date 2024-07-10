@@ -349,11 +349,6 @@
     <url>https://github.com/webcompere/model-assert/issues</url>
   </issueManagement>
 
-  <ciManagement>
-    <system>AppVeyor</system>
-    <url>https://ci.appveyor.com/project/ashleyfrieze/model-assert</url>
-  </ciManagement>
-
   <profiles>
     <!-- GPG Signature on release -->
     <profile>
