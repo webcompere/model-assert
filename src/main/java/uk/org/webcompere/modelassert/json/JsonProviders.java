@@ -7,22 +7,58 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Collection of built in convertions to {@link JsonNode}
  */
 public class JsonProviders {
-    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-        .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    private static final ObjectMapper DEFAULT_OBJECT_MAPPER = defaultObjectMapper();
 
-    private static ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper DEFAULT_YAML_MAPPER = defaultYamlMapper();
+
+    public static ObjectMapper defaultObjectMapper() {
+        return new ObjectMapper()
+            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    }
+
+    public static ObjectMapper defaultYamlMapper() {
+        return new ObjectMapper(new YAMLFactory());
+    }
+
+    private static ThreadLocal<ObjectMapper> overrideObjectMapper = new ThreadLocal<>();
+    private static ThreadLocal<ObjectMapper> overrideYamlObjectMapper = new ThreadLocal<>();
+
+    private static ObjectMapper getObjectMapper() {
+        return Optional.ofNullable(overrideObjectMapper.get()).orElse(DEFAULT_OBJECT_MAPPER);
+    }
+
+    private static ObjectMapper getYamlObjectMapper() {
+        return Optional.ofNullable(overrideYamlObjectMapper.get()).orElse(DEFAULT_YAML_MAPPER);
+    }
+
+    public static void overrideObjectMapper(ObjectMapper mapper) {
+        overrideObjectMapper.set(mapper);
+    }
+
+    public static void clearObjectMapperOverride() {
+        overrideObjectMapper.remove();
+    }
+
+    public static void overrideYamlObjectMapper(ObjectMapper mapper) {
+        overrideYamlObjectMapper.set(mapper);
+    }
+
+    public static void clearYamlObjectMapperOverride() {
+        overrideYamlObjectMapper.remove();
+    }
 
     /**
      * A provider which parses String to {@link JsonNode}
      * @return the provider
      */
     public static JsonProvider<String> jsonStringProvider() {
-        return OBJECT_MAPPER::readTree;
+        return getObjectMapper()::readTree;
     }
 
     /**
@@ -30,7 +66,7 @@ public class JsonProviders {
      * @return the provider
      */
     public static JsonProvider<Object> jsonObjectProvider() {
-        return object -> OBJECT_MAPPER.convertValue(object, JsonNode.class);
+        return object -> getObjectMapper().convertValue(object, JsonNode.class);
     }
 
     /**
@@ -38,7 +74,7 @@ public class JsonProviders {
      * @return the provider
      */
     public static JsonProvider<File> jsonFileProvider() {
-        return OBJECT_MAPPER::readTree;
+        return getObjectMapper()::readTree;
     }
 
     /**
@@ -46,7 +82,7 @@ public class JsonProviders {
      * @return the provider
      */
     public static JsonProvider<Path> jsonPathProvider() {
-        return path -> OBJECT_MAPPER.readTree(path.toFile());
+        return path -> getObjectMapper().readTree(path.toFile());
     }
 
     /**
@@ -54,7 +90,7 @@ public class JsonProviders {
      * @return the provider
      */
     public static JsonProvider<String> yamlStringProvider() {
-        return YAML_MAPPER::readTree;
+        return getYamlObjectMapper()::readTree;
     }
 
     /**
@@ -62,7 +98,7 @@ public class JsonProviders {
      * @return the provider
      */
     public static JsonProvider<File> yamlFileProvider() {
-        return YAML_MAPPER::readTree;
+        return getYamlObjectMapper()::readTree;
     }
 
     /**
@@ -70,6 +106,6 @@ public class JsonProviders {
      * @return the provider
      */
     public static JsonProvider<Path> yamlPathProvider() {
-        return path -> YAML_MAPPER.readTree(path.toFile());
+        return path -> getYamlObjectMapper().readTree(path.toFile());
     }
 }
