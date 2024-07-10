@@ -1,0 +1,16 @@
+name: Build on Push
+run-name: Build commit
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: adopt-openj9
+          java-version: 11
+          cache: maven
+      - run: ./mvnw clean package verify
+      - run: CODECOV_TOKEN='6a02e79f-7d28-4a25-a863-64d9762ba037' bash <(curl -s https://codecov.io/bash)
+
