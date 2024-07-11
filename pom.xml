@@ -33,7 +33,7 @@
     <connection>scm:git:git://github.com/webcompere/model-assert.git</connection>
     <developerConnection>scm:git:git@github.com:webcompere/model-assert.git</developerConnection>
     <url>https://github.com/webcompere/model-assert/</url>
-    <tag>model-assert-1.0.2</tag>
+    <tag>model-assert-1.0.3</tag>
   </scm>
 
   <properties>
