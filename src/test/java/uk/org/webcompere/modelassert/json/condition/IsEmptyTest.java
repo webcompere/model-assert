@@ -18,6 +18,12 @@ class IsEmptyTest {
             assertion -> assertion.at("/count").isNotEmpty());
     }
 
+    @Test
+    void isNotEmptyOnNullIsFalse() {
+        assertAllWays("{\"count\":0}", "{\"count\":null}",
+            assertion -> assertion.at("/count").isNotEmpty());
+    }
+
 
     @Test
     void isEmptyOnArrayIsTrue() {

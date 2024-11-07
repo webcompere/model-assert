@@ -157,10 +157,13 @@ public interface JsonNodeAssertDsl<A>
     }
 
     /**
-     * Depending on the type of node, this will detect <em>emptiness</em>
+     * Depending on the type of node, this will detect the opposite of <em>emptiness</em>. For something
+     * to be not empty, it needs to be truthy AND it needs to have contents if it's something that contains things.
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
      */
     default A isNotEmpty() {
-        return satisfies(not(MissingCondition.getInstance()).and(not(new IsEmpty())));
+        return satisfies(not(MissingCondition.getInstance())
+            .and(not(NullCondition.getInstance()))
+            .and(not(new IsEmpty())));
     }
 }
