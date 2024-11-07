@@ -161,6 +161,6 @@ public interface JsonNodeAssertDsl<A>
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
      */
     default A isNotEmpty() {
-        return satisfies(not(new IsEmpty()));
+        return satisfies(not(MissingCondition.getInstance()).and(not(new IsEmpty())));
     }
 }
