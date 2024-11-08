@@ -158,9 +158,14 @@ public interface JsonNodeAssertDsl<A>
 
     /**
      * Depending on the type of node, this will detect the opposite of <em>emptiness</em>. For something
-     * to be not empty, it needs to be truthy AND it needs to have contents if it's something that contains things.
+     * to be not empty, it needs to be truthy AND it needs to have contents if it's something that contains things. <br>
+     * <em>Warning!</em> this is best used prefixed with a type assertion so know we have
+     * a {@link Sizeable} item in the node. E.g. <pre>assertJson(json).at("/field").array().isNotEmpty();</pre> if
+     * used without the type assertion, then this is quite a vague assertion.
      * @return the {@link CoreJsonAssertion} for fluent assertions, with this condition added
+     * @deprecated use a type assertion such as <code>.text()</code> before this to avoid confusion
      */
+    @Deprecated
     default A isNotEmpty() {
         return satisfies(not(MissingCondition.getInstance())
             .and(not(NullCondition.getInstance()))

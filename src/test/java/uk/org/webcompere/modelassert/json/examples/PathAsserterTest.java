@@ -1,6 +1,7 @@
 package uk.org.webcompere.modelassert.json.examples;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
@@ -23,6 +24,25 @@ class PathAsserterTest {
             .at("/color").isNull()
             .at("/make").isNotNull()
             .at("/owner").isNotNull();
+    }
+
+    @Test
+    void isEmptyWithTextSpecific() {
+        assertJson(EXAMPLE_JSON)
+            .at("/owner").text().isEmpty();
+    }
+
+    @Test
+    void isEmptyAsTextOnNullFails() {
+        assertThatThrownBy(() -> assertJson(EXAMPLE_JSON)
+            .at("/color").text().isEmpty())
+            .isInstanceOf(AssertionFailedError.class);
+    }
+
+    @Test
+    void isNotEmptyWithTextSpecific() {
+        assertJson(EXAMPLE_JSON)
+            .at("/model").text().isNotEmpty();
     }
 
     @Test

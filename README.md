@@ -281,11 +281,21 @@ type specific assertions below, as well as:
     .at("/name").isText()
     .at("/name").isEmpty();
   ```
+  or, better still:
+  ```java
+  assertJson(someJson)
+    .at("/name").text().isEmpty();
+  ```
   Though for brevity, the `isEmptyText`/`isNotEmptyText` may be easier:
     ```java
   assertJson(someJson)
     .at("/name").isEmptyText();
   ```
+  > [!WARNING]
+  > Unless you're 100% sure of the type of a note, `isEmpty` and `isNotEmpty` are too approximate and
+  > should be combined with a DSL-switching type assertion like `.text()`, `.object()`, or `.array()`
+  > since `isEmpty` on a `Boolean` makes no sense, and it's not clear what `isNotEmpty` or `isEmpty` would
+  > mean on `null`.
 - `matches(Matcher<JsonNode>)` - assert that the **node** found at this JSON path matches a hamcrest matcher for `JsonNode`
   ```java
   assertJson(jsonString)

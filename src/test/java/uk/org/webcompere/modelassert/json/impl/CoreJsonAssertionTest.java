@@ -127,8 +127,8 @@ class CoreJsonAssertionTest {
     }
 
     @Test
-    void isNotArrayViaArrayContextOnRoot() {
+    void isNotArrayContextOnRoot() {
         assertAllWays("{}", "[]",
-                assertion -> assertion.array().isNotArray());
+                assertion -> assertion.isNotArray());
     }
 }
