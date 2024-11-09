@@ -22,7 +22,7 @@ Install from Maven Central:
 <dependency>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>model-assert</artifactId>
-  <version>1.0.3</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
