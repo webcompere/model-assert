@@ -7,10 +7,23 @@ import static uk.org.webcompere.modelassert.json.TestAssertions.assertAllWays;
 class IsEmptyTest {
 
     @Test
-    void isEmptyOnNumberIsFalse() {
+    void isNotEmptyOnNumberIsTrue() {
         assertAllWays("{\"count\":0}", "{\"count\":[]}",
                 assertion -> assertion.at("/count").isNotEmpty());
     }
+
+    @Test
+    void isNotEmptyOnMissingIsFalse() {
+        assertAllWays("{\"count\":0}", "{}",
+            assertion -> assertion.at("/count").isNotEmpty());
+    }
+
+    @Test
+    void isNotEmptyOnNullIsFalse() {
+        assertAllWays("{\"count\":0}", "{\"count\":null}",
+            assertion -> assertion.at("/count").isNotEmpty());
+    }
+
 
     @Test
     void isEmptyOnArrayIsTrue() {

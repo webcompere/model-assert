@@ -1,7 +1,10 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 import static uk.org.webcompere.modelassert.json.TestAssertions.assertAllWays;
 
 class NumericNodeDslTest {
@@ -178,5 +181,18 @@ class NumericNodeDslTest {
     void isNumber() {
         assertAllWays("1", "\"\"",
             assertion -> assertion.isNumber());
+    }
+
+    @Test
+    void whenUsingNumberNodeThenNodeMustBeNumber() {
+        assertThatThrownBy(() -> assertJson("{foo:[]}")
+            .at("/foo").number())
+            .isInstanceOf(AssertionFailedError.class);
+    }
+
+    @Test
+    void whenUsingNumberNodeWithThenComparisonsWork() {
+        assertJson("{foo:12}")
+            .at("/foo").number().isGreaterThan(10);
     }
 }

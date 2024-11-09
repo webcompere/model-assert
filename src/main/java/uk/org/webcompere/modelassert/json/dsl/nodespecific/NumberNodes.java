@@ -1,5 +1,7 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import uk.org.webcompere.modelassert.json.condition.PredicateWrappedCondition;
 import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 import uk.org.webcompere.modelassert.json.dsl.SubsetDsl;
 
@@ -9,6 +11,11 @@ import uk.org.webcompere.modelassert.json.dsl.SubsetDsl;
  */
 public class NumberNodes<A> extends SubsetDsl<A> implements NumberNodeDsl<A> {
     public NumberNodes(Satisfies<A> satisfies) {
-        super(satisfies);
+        super(isNumber(satisfies));
+    }
+
+    private static <A> Satisfies<A> isNumber(Satisfies<A> requirements) {
+        requirements.satisfies(new PredicateWrappedCondition("Number", JsonNode::isNumber));
+        return requirements;
     }
 }
