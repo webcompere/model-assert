@@ -1,27 +1,18 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 import static uk.org.webcompere.modelassert.json.TestAssertions.assertAllWays;
 
 class ObjectNodeDslTest {
 
     @Test
-    void objectIsObject() {
-        assertAllWays("{}", "null",
-            ObjectNodeDsl::isObject);
-    }
-
-    @Test
     void objectIsObjectViaObjectContext() {
         assertAllWays("{}", "null",
-            assertion -> assertion.object().isObject());
-    }
-
-    @Test
-    void nonObjectIsNotObject() {
-        assertAllWays("[]", "{}",
-            ObjectNodeDsl::isNotObject);
+            assertion -> assertion.object());
     }
 
     @Test
@@ -87,5 +78,24 @@ class ObjectNodeDslTest {
         assertAllWays("{\"gender\":\"male\", \"name\":\"Mr Name\"}",
             "{\"gender\":\"male\", \"name\":\"Mr Name\", \"other\": true}",
             assertion -> assertion.containsKeysExactlyInAnyOrder("name", "gender"));
+    }
+
+    @Test
+    void whenUsingObjectNodeThenNodeMustBeObject() {
+        assertThatThrownBy(() -> assertJson("{foo:[]}")
+            .at("/foo").object().isEmpty())
+            .isInstanceOf(AssertionFailedError.class);
+    }
+
+    @Test
+    void whenUsingObjectNodeWithObjectThenIsEmptyWorks() {
+        assertJson("{foo:{}}")
+            .at("/foo").object().isEmpty();
+    }
+
+    @Test
+    void whenUsingObjectNodeWithObjectThenIsNotEmptyWorks() {
+        assertJson("{foo:{bar:\"bar\"}}")
+            .at("/foo").object().isNotEmpty();
     }
 }

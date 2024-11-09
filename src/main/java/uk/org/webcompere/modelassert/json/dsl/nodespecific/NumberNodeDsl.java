@@ -1,8 +1,6 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import uk.org.webcompere.modelassert.json.condition.NumberCondition;
-import uk.org.webcompere.modelassert.json.condition.PredicateWrappedCondition;
 import uk.org.webcompere.modelassert.json.dsl.Satisfies;
 
 import static uk.org.webcompere.modelassert.json.condition.Not.not;
@@ -93,22 +91,6 @@ public interface NumberNodeDsl<A> extends Satisfies<A>, NumberComparisonDsl<A> {
      */
     default A isLessThanOrEqualToDouble(double number) {
         return satisfiesNumberCondition(new NumberCondition<>(Double.class, number, LESS_THAN_OR_EQUAL));
-    }
-
-    /**
-     * Assert that the node is not a number node
-     * @return the assertion for fluent assertions, with this condition added
-     */
-    default A isNotNumber() {
-        return satisfies(not(new PredicateWrappedCondition("Number", JsonNode::isNumber)));
-    }
-
-    /**
-     * Assert that the node is a number node
-     * @return the assertion for fluent assertions, with this condition added
-     */
-    default A isNumber() {
-        return satisfies(new PredicateWrappedCondition("Number", JsonNode::isNumber));
     }
 
     /**

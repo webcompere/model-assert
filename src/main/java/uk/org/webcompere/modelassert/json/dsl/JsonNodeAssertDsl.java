@@ -171,4 +171,84 @@ public interface JsonNodeAssertDsl<A>
             .and(not(NullCondition.getInstance()))
             .and(not(new IsEmpty())));
     }
+
+    /**
+     * Assert that the node is boolean
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isBoolean() {
+        return satisfies(new PredicateWrappedCondition("Boolean", JsonNode::isBoolean));
+    }
+
+    /**
+     * Assert that the node is not boolean
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotBoolean() {
+        return satisfies(not(new PredicateWrappedCondition("Boolean", JsonNode::isBoolean)));
+    }
+
+    /**
+     * Assert that the node is not a number node
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotNumber() {
+        return satisfies(not(new PredicateWrappedCondition("Number", JsonNode::isNumber)));
+    }
+
+    /**
+     * Assert that the node is a number node
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNumber() {
+        return satisfies(new PredicateWrappedCondition("Number", JsonNode::isNumber));
+    }
+
+    /**
+     * Assert that the value is an array
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isArray() {
+        return satisfies(new PredicateWrappedCondition("Object", JsonNode::isArray));
+    }
+
+    /**
+     * Assert that the value is not an array
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotArray() {
+        return satisfies(not(new PredicateWrappedCondition("Object", JsonNode::isArray)));
+    }
+
+    /**
+     * Assert that the value is an object
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isObject() {
+        return satisfies(new PredicateWrappedCondition("Object", JsonNode::isObject));
+    }
+
+    /**
+     * Assert that the value is not an object
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotObject() {
+        return satisfies(not(new PredicateWrappedCondition("Object", JsonNode::isObject)));
+    }
+
+    /**
+     * Assert that the node is a text node
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isText() {
+        return satisfies(new PredicateWrappedCondition("Text", JsonNode::isTextual));
+    }
+
+    /**
+     * Assert that the node is not a text node
+     * @return the assertion for fluent assertions, with this condition added
+     */
+    default A isNotText() {
+        return satisfies(not(new PredicateWrappedCondition("Text", JsonNode::isTextual)));
+    }
 }

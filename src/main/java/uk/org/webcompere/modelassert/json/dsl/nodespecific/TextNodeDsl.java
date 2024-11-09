@@ -56,28 +56,12 @@ public interface TextNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
     }
 
     /**
-     * Assert that the node is a text node
-     * @return the assertion for fluent assertions, with this condition added
-     */
-    default A isText() {
-        return satisfies(new PredicateWrappedCondition("Text", JsonNode::isTextual));
-    }
-
-    /**
      * Assert that the node is a text node with a given value
      * @param text the expected value
      * @return the assertion for fluent assertions, with this condition added
      */
     default A isText(String text) {
         return satisfiesTextCondition(new HasValue<>(JsonNode::asText, text));
-    }
-
-    /**
-     * Assert that the node is not a text node
-     * @return the assertion for fluent assertions, with this condition added
-     */
-    default A isNotText() {
-        return satisfies(not(new PredicateWrappedCondition("Text", JsonNode::isTextual)));
     }
 
     /**

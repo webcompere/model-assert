@@ -88,7 +88,7 @@ class CoreJsonAssertionTest {
     void jsonAtStringInStringContextDetectString() {
         assertAllWays("{\"name\":\"Jason\"}", "{\"name\":null}",
                 assertion -> assertion.at("/name")
-                        .text().isText());
+                        .text());
     }
 
     @Test
@@ -101,29 +101,23 @@ class CoreJsonAssertionTest {
     @Test
     void isObjectOnRoot() {
         assertAllWays("{}", "null",
-                ObjectNodeDsl::isObject);
+                JsonNodeAssertDsl::isObject);
     }
 
     @Test
     void isNotObjectOnRoot() {
         assertAllWays("123", "{}",
-                ObjectNodeDsl::isNotObject);
-    }
-
-    @Test
-    void isObjectOnRootViaObjectContext() {
-        assertAllWays("{}", "null",
-                assertion -> assertion.object().isObject());
+                JsonNodeAssertDsl::isNotObject);
     }
 
     @Test
     void isArrayOnRoot() {
-        assertAllWays("[]", "{}", ArrayNodeDsl::isArray);
+        assertAllWays("[]", "{}", JsonNodeAssertDsl::isArray);
     }
 
     @Test
     void isNotArrayOnRoot() {
-        assertAllWays("{}", "[]", ArrayNodeDsl::isNotArray);
+        assertAllWays("{}", "[]", JsonNodeAssertDsl::isNotArray);
     }
 
     @Test

@@ -1,7 +1,10 @@
 package uk.org.webcompere.modelassert.json.dsl.nodespecific;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 import static uk.org.webcompere.modelassert.json.TestAssertions.assertAllWays;
 
 class BooleanNodeDslTest {
@@ -36,4 +39,22 @@ class BooleanNodeDslTest {
                 assertion -> assertion.at("/good").booleanNode().isTrue());
     }
 
+    @Test
+    void whenUsingBooleanNodeThenNodeMustBeBoolean() {
+        assertThatThrownBy(() -> assertJson("{foo:{}}")
+            .at("/foo").booleanNode())
+            .isInstanceOf(AssertionFailedError.class);
+    }
+
+    @Test
+    void whenUsingBooleanNodeThenIsTrueWorks() {
+        assertJson("{foo:true}")
+            .at("/foo").booleanNode().isTrue();
+    }
+
+    @Test
+    void whenUsingBooleanNodeThenIsFalseWorks() {
+        assertJson("{foo:false}")
+            .at("/foo").booleanNode().isFalse();
+    }
 }

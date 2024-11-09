@@ -24,22 +24,6 @@ public interface ObjectNodeDsl<A> extends Satisfies<A>, Sizeable<A> {
     }
 
     /**
-     * Assert that the value is an object
-     * @return the assertion for fluent assertions, with this condition added
-     */
-    default A isObject() {
-        return satisfies(new PredicateWrappedCondition("Object", JsonNode::isObject));
-    }
-
-    /**
-     * Assert that the value is not an object
-     * @return the assertion for fluent assertions, with this condition added
-     */
-    default A isNotObject() {
-        return satisfies(not(new PredicateWrappedCondition("Object", JsonNode::isObject)));
-    }
-
-    /**
      * Assert that the value contains a key/field
      * @param key the key to search for
      * @return the assertion for fluent assertions, with this condition added

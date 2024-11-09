@@ -215,6 +215,19 @@ can be narrowed down to assertions for just that type - this can also be more ex
     assertJson(json)
        .at("/name").text().isText("My Name");
     ```
+    it's probably more _correct_ to specify the type and then use assertions relating to that type, but as
+    a shorthand, the assertions are all available without an additional type specifier. Using the type,
+    implicitly creates a check that the node is the correct type, so:
+    ```java
+    assertJson(json)
+       .at("/name").text().isEmpty();
+    ```
+    is the equivalent of:
+    ```java
+    assertJson(json)
+       .at("/name").isText()
+       .at("/name").isEmpty();
+    ```
 - **Where** - called before `isEqualTo` to create rules for whole tree comparison
 
 ### Json At
@@ -292,7 +305,7 @@ type specific assertions below, as well as:
     .at("/name").isEmptyText();
   ```
   > [!WARNING]
-  > Unless you're 100% sure of the type of a note, `isEmpty` and `isNotEmpty` are too approximate and
+  > Unless you're 100% sure of the type of a node, `isEmpty` and `isNotEmpty` are too approximate and
   > should be combined with a DSL-switching type assertion like `.text()`, `.object()`, or `.array()`
   > since `isEmpty` on a `Boolean` makes no sense, and it's not clear what `isNotEmpty` or `isEmpty` would
   > mean on `null`.
