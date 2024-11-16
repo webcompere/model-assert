@@ -28,6 +28,11 @@ public enum TreeRule {
     ARRAY_CONTAINS,
 
     /**
+     * Allow an empty array to match null and vice-versa
+     */
+    NULL_MATCHES_EMPTY_ARRAY,
+
+    /**
      * Skip over fields that are missing in the other object - implies keys in any order
      */
     OBJECT_CONTAINS,

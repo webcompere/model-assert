@@ -62,6 +62,15 @@ public class WhereDsl<A> implements IsEqualToDsl<A> {
     }
 
     /**
+     * Allow empty array to match null and vice-versa
+     *
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> nullMatchesEmptyArray() {
+        return pathRule(new PathRule(TreeRule.NULL_MATCHES_EMPTY_ARRAY));
+    }
+
+    /**
      * Add common configuration to the where dsl
      * @param configurer the configurer to use
      * @return the {@link WhereDsl} for further customisation

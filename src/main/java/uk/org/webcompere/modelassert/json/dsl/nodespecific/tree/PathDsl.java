@@ -87,6 +87,15 @@ public class PathDsl<A> implements JsonNodeAssertDsl<WhereDsl<A>> {
     }
 
     /**
+     * Allow empty array to match null and vice-versa
+     *
+     * @return <code>this</code> for fluent calling
+     */
+    public WhereDsl<A> nullMatchesEmptyArray() {
+        return whereDsl.pathRule(new PathRule(pathMatch, TreeRule.NULL_MATCHES_EMPTY_ARRAY));
+    }
+
+    /**
      * Ignore everything at this path
      * @return the {@link WhereDsl} for fluent calling, with this path ignored
      */

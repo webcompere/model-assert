@@ -114,4 +114,11 @@ class ArrayNodeDslTest {
         assertJson("{foo:[\"bar\"]}")
             .at("/foo").array().isNotEmpty();
     }
+
+    @Test
+    void emptyArrayCanBeConfiguredToMatchNull() {
+        assertJson("{foo: null}")
+                .where().nullMatchesEmptyArray()
+                .isEqualTo("{foo: []}");
+    }
 }
