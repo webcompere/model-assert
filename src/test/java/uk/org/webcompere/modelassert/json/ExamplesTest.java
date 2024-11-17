@@ -541,4 +541,14 @@ class ExamplesTest {
             .path("z").objectContains()
             .isEqualTo("{z:{b:{d:false, c:true}}}");
     }
+
+    @Test
+    void at_isCheckedEvenIfTreeComparisonSucceeds() {
+        assertThatThrownBy(() ->
+                assertJson("{foo: 42}")
+                        .where().objectContains()
+                        .at("/foo").isText()
+                        .isEqualTo("{}"))
+                .isInstanceOf(AssertionFailedError.class);
+    }
 }
