@@ -117,7 +117,7 @@ public interface JsonNodeAssertDsl<A>
 
     /**
      * Switch to string context
-     * @return a subset of the DSL with just the numeric options
+     * @return a subset of the DSL with just the text options
      */
     default TextNodes<A> text() {
         return new TextNodes<>(this);
@@ -133,7 +133,7 @@ public interface JsonNodeAssertDsl<A>
 
     /**
      * Switch to array context
-     * @return a subset of the DSL with just the boolean options
+     * @return a subset of the DSL with just the array options
      */
     default ArrayNodes<A> array() {
         return new ArrayNodes<>(this);
@@ -141,7 +141,7 @@ public interface JsonNodeAssertDsl<A>
 
     /**
      * Switch to object context
-     * @return a subset of the DSL with just the boolean options
+     * @return a subset of the DSL with just the object options
      */
     default ObjectNodes<A> object() {
         return new ObjectNodes<>(this);
