@@ -91,6 +91,12 @@ public class TreeComparisonCondition implements Condition {
             return;
         }
 
+        boolean usingNullMatchedEmpty = findRule(pathToHere, TreeRule.NULL_MATCHES_EMPTY_ARRAY).isPresent();
+        if (usingNullMatchedEmpty && (
+                actual.isNull() && expected.isEmpty() || actual.isEmpty() && expected.isNull())) {
+            return;
+        }
+
         // early exit if types don't match
         if (actual.getNodeType() != expected.getNodeType()) {
             failures.add(pathToHere.toString() + " different types: expected " + expected.getNodeType() +
